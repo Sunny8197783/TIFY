@@ -38,10 +38,10 @@
 * **리뷰 룰:** `main` 브랜치 병합 전 최소 1명 이상 승인 필요
 
 ### 👥 팀원 역할
-* **PM (Product Manager):** [이름]
-* **Tech Lead:** [이름]
-* **UI/UX Designer:** [이름]
-* **QA Engineer:** [이름]
-* **Scrum Master:** [이름]
-* **Tech Writer:** [이름]
-* **DevRel (Presenter):** [이름]
+PM (Product Manager): 김태양 — 전체 일정·범위·우선순위 총괄, 백엔드 API 설계 병행
+Tech Lead: 임성진 — 백엔드 아키텍처 리드, 플레이리스트 추천 알고리즘 및 Embed 연동 주도
+UI/UX Designer: 박찬연 — Figma 시안 리드, Tailwind 컴포넌트 구현, 디자인 시스템 정의 (보조: 서동건, 유승재)
+QA Engineer: 유승재 — 테스트 케이스 작성, 크로스 브라우저 점검, GitHub Issue 관리 (보조: 김태양)
+Scrum Master: 조은성 — 회의 진행·기록, 일일 스크럼 호스트, 팀 일정 동기화
+Tech Writer / Git Manager: 최한결 — README·문서화 + Git Release Manager (브랜치 보호, PR 코디네이션, 릴리스 태깅, 롤백·자동화)
+DevRel (Presenter): 조은성 — 최종 발표 자료 작성 및 시연 담당 (서동건: 백엔드(OpenWeather 연동) + 결과 카드 UI 디자인 겸임)
