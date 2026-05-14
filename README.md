@@ -37,10 +37,13 @@
   2. ...
 
 ## 🛠️ 5. 기술 스택 및 아키텍처
-* **언어:** HTML5, CSS3, JavaScript
-* **스타일링:** Tailwind CSS
-* **버전 관리 및 배포:** Git, GitHub, GitHub Pages
-* **기획 도구:** Figma, Notion
+언어: HTML5, CSS3, JavaScript (ES6+)
+스타일링: Tailwind CSS
+백엔드: Node.js / Express (또는 Python Flask) — 감정 분석·날씨 API 프록시
+AI: OpenAI GPT API (감정 분석 + 위로 멘트 생성)
+외부 API: OpenWeather (날씨), YouTube/Spotify Embed (음원)
+버전 관리 및 배포: Git, GitHub, GitHub Pages (FE) / Render·Vercel (BE)
+기획 도구: Figma, Notion
 
 ## 🤝 6. 팀 규칙 및 역할 분담
 ### 📌 팀 규칙
