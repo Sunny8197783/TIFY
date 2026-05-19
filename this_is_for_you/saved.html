@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="ko"><head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>저장한 음악</title>
+<link rel="stylesheet" href="css/style.css"/>
+</head><body>
+<div class="app">
+  
+<aside class="sidebar">
+  <a href="index.html" class="nav-item"><span class="ico">🏠</span><span>홈</span></a>
+<a href="result.html" class="nav-item"><span class="ico">🎵</span><span>추천 플레이리스트</span></a>
+<a href="record.html" class="nav-item"><span class="ico">💗</span><span>감정 기록</span></a>
+<a href="saved.html" class="nav-item active"><span class="ico">🔖</span><span>저장한 음악</span></a>
+<a href="#" class="nav-item"><span class="ico">⚙️</span><span>설정</span></a>
+
+  <div class="quote">
+    <span class="moon">🌙</span>
+    "음악은 감정을<br/>이해하는 가장<br/>가까운 언어야."
+  </div>
+</aside>
+
+  <main class="main">
+    <section class="result">
+      <h2 style="margin-bottom:24px;">저장한 음악</h2>
+      <div class="song-list" id="savedList">
+        <p style="color:var(--text-dim); text-align:center; padding:40px;">아직 저장한 곡이 없어요. ♥ 버튼으로 곡을 담아보세요.</p>
+      </div>
+    </section>
+  </main>
+</div>
+<script src="js/saved.js"></script>
+</body></html>
