@@ -1,0 +1,90 @@
+{
+  "happy": [
+    {"title":"좋은 날","artist":"아이유","desc":"기분 좋은 순간을 더 환하게","time":"03:47","mood":"잔잔한"},
+    {"title":"Happy","artist":"Pharrell Williams","desc":"행복이 차오르는 멜로디","time":"03:53","mood":"인디"},
+    {"title":"Walking on Sunshine","artist":"Katrina & The Waves","desc":"발걸음이 가벼워지는 노래","time":"03:58","mood":"인디"},
+    {"title":"봄날","artist":"방탄소년단","desc":"따뜻한 기억을 떠올리며","time":"04:34","mood":"잔잔한"},
+    {"title":"Best Day of My Life","artist":"American Authors","desc":"오늘이 최고의 날","time":"03:14","mood":"인디"},
+    {"title":"Dynamite","artist":"BTS","desc":"춤추고 싶어지는 노래","time":"03:19","mood":"인디"}
+  ],
+  "sad": [
+    {"title":"너의 밤은 어떤지","artist":"에피톤 프로젝트","desc":"지친 밤을 천천히 감싸주는 노래","time":"04:31","mood":"잔잔한"},
+    {"title":"수고했어, 오늘도","artist":"옥상달빛","desc":"오늘 하루, 나에게 건네는 작은 위로","time":"03:56","mood":"위로"},
+    {"title":"우리 잠깐 쉬어갈래요","artist":"스탠딩 에그","desc":"복잡한 생각을 내려놓게","time":"04:15","mood":"위로"},
+    {"title":"Amsterdam","artist":"Paul Kim","desc":"외로움에 조용히 스며드는","time":"03:41","mood":"위로"},
+    {"title":"안녕","artist":"폴킴","desc":"눈물이 차오르는 발라드","time":"04:22","mood":"위로"},
+    {"title":"Fix You","artist":"Coldplay","desc":"마음을 어루만지는 곡","time":"04:55","mood":"위로"}
+  ],
+  "dawn": [
+    {"title":"새벽 세 시","artist":"검정치마","desc":"고요한 새벽의 정수","time":"04:12","mood":"새벽 감성"},
+    {"title":"밤편지","artist":"아이유","desc":"잠 못 드는 밤을 위한","time":"04:14","mood":"새벽 감성"},
+    {"title":"Through The Night","artist":"IU","desc":"새벽 감성의 정수","time":"04:08","mood":"어쿠스틱"},
+    {"title":"미아","artist":"백예린","desc":"길을 잃은 새벽의 분위기","time":"03:32","mood":"새벽 감성"},
+    {"title":"Square","artist":"백예린","desc":"고요한 새벽 감성","time":"03:39","mood":"새벽 감성"},
+    {"title":"새벽에","artist":"카더가든","desc":"잠 못 드는 새벽","time":"04:01","mood":"새벽 감성"}
+  ],
+  "focus": [
+    {"title":"Weightless","artist":"Marconi Union","desc":"집중력을 높여주는 앰비언트","time":"08:10","mood":"잔잔한"},
+    {"title":"River Flows in You","artist":"Yiruma","desc":"공부에 어울리는 피아노","time":"03:10","mood":"어쿠스틱"},
+    {"title":"Comptine d'un autre été","artist":"Yann Tiersen","desc":"몰입을 돕는 멜로디","time":"02:21","mood":"어쿠스틱"},
+    {"title":"Experience","artist":"Ludovico Einaudi","desc":"깊은 집중의 시간","time":"05:15","mood":"어쿠스틱"},
+    {"title":"Nuvole Bianche","artist":"Ludovico Einaudi","desc":"하얀 구름같은 평온","time":"05:58","mood":"어쿠스틱"},
+    {"title":"Divenire","artist":"Ludovico Einaudi","desc":"공부하기 좋은 피아노","time":"06:42","mood":"어쿠스틱"}
+  ],
+  "chill": [
+    {"title":"Lo-fi Rainy Day","artist":"Chillhop","desc":"멍 때리기 좋은 비트","time":"03:22","mood":"인디"},
+    {"title":"Coffee","artist":"BTS V","desc":"잠시 쉬어가는 시간","time":"03:43","mood":"잔잔한"},
+    {"title":"Sunday Morning","artist":"Maroon 5","desc":"여유로운 일요일","time":"04:06","mood":"잔잔한"},
+    {"title":"Lazy Sunday","artist":"Brett Dennen","desc":"늘어지는 오후의 곡","time":"03:18","mood":"인디"},
+    {"title":"Coffee Shop","artist":"Lofi Beats","desc":"카페에서 멍하니","time":"02:48","mood":"인디"}
+  ],
+  "love": [
+    {"title":"좋다고 말해","artist":"볼빨간사춘기","desc":"설렘이 가득","time":"03:32","mood":"인디"},
+    {"title":"Love poem","artist":"아이유","desc":"따뜻한 사랑의 멜로디","time":"04:03","mood":"잔잔한"},
+    {"title":"있잖아","artist":"잔나비","desc":"두근거리는 마음","time":"03:48","mood":"인디"},
+    {"title":"우리의 밤을 가져요","artist":"수란","desc":"달콤한 사랑의 노래","time":"03:30","mood":"잔잔한"},
+    {"title":"Lovers","artist":"폴킴","desc":"연인을 위한 노래","time":"04:12","mood":"잔잔한"}
+  ],
+  "angry": [
+    {"title":"Numb","artist":"Linkin Park","desc":"답답함을 분출하는","time":"03:07","mood":"인디"},
+    {"title":"In The End","artist":"Linkin Park","desc":"화를 음악으로","time":"03:36","mood":"인디"},
+    {"title":"Castle of Glass","artist":"Linkin Park","desc":"감정을 토해내는","time":"04:33","mood":"인디"},
+    {"title":"What I've Done","artist":"Linkin Park","desc":"분노를 다스리는","time":"03:25","mood":"인디"},
+    {"title":"Believer","artist":"Imagine Dragons","desc":"강한 에너지","time":"03:24","mood":"인디"}
+  ],
+  "anxious": [
+    {"title":"Breathe Me","artist":"Sia","desc":"불안을 다독이는","time":"04:30","mood":"위로"},
+    {"title":"천천히 걸어","artist":"잔나비","desc":"조급함을 내려놓고","time":"03:55","mood":"위로"},
+    {"title":"Anyone","artist":"Justin Bieber","desc":"의지할 누군가","time":"03:10","mood":"위로"},
+    {"title":"Ocean","artist":"Lady A","desc":"바다처럼 잔잔하게","time":"03:42","mood":"잔잔한"},
+    {"title":"숨","artist":"박효신","desc":"숨을 고르며","time":"04:46","mood":"위로"}
+  ],
+  "energetic": [
+    {"title":"Pump It","artist":"Black Eyed Peas","desc":"에너지 폭발","time":"03:33","mood":"인디"},
+    {"title":"Don't Stop Me Now","artist":"Queen","desc":"멈출 수 없는 기세","time":"03:29","mood":"인디"},
+    {"title":"Eye of the Tiger","artist":"Survivor","desc":"의욕이 솟구치는","time":"04:04","mood":"인디"},
+    {"title":"Stronger","artist":"Kanye West","desc":"더 강해지는 비트","time":"05:11","mood":"인디"},
+    {"title":"Run Boy Run","artist":"Woodkid","desc":"달려나가는 에너지","time":"03:31","mood":"인디"}
+  ],
+  "nostalgic": [
+    {"title":"Yesterday","artist":"The Beatles","desc":"지나간 시간의 향수","time":"02:05","mood":"어쿠스틱"},
+    {"title":"옛사랑","artist":"이문세","desc":"추억의 노래","time":"04:21","mood":"잔잔한"},
+    {"title":"Photograph","artist":"Ed Sheeran","desc":"사진 속 그날","time":"04:19","mood":"어쿠스틱"},
+    {"title":"가시나무","artist":"시인과 촌장","desc":"마음 속 추억","time":"03:48","mood":"어쿠스틱"},
+    {"title":"이젠 안녕","artist":"015B","desc":"오래된 추억","time":"04:33","mood":"잔잔한"}
+  ],
+  "lonely": [
+    {"title":"Someone Like You","artist":"Adele","desc":"외로움의 깊이","time":"04:45","mood":"위로"},
+    {"title":"Stay","artist":"Rihanna","desc":"옆에 있어줘","time":"04:00","mood":"위로"},
+    {"title":"혼자","artist":"기리보이","desc":"혼자인 밤","time":"03:21","mood":"새벽 감성"},
+    {"title":"나의 옛날이야기","artist":"조덕배","desc":"홀로 듣는 노래","time":"04:08","mood":"잔잔한"},
+    {"title":"Empty","artist":"WINNER","desc":"텅 빈 마음","time":"03:25","mood":"위로"}
+  ],
+  "rainy": [
+    {"title":"비가 오는 날엔","artist":"비스트","desc":"빗소리와 함께","time":"03:46","mood":"잔잔한"},
+    {"title":"Set Fire to the Rain","artist":"Adele","desc":"비 오는 날의 발라드","time":"04:01","mood":"위로"},
+    {"title":"우산","artist":"에픽하이","desc":"비 내리는 거리","time":"04:11","mood":"잔잔한"},
+    {"title":"Rainy Days","artist":"방탄소년단","desc":"비 오는 새벽","time":"03:53","mood":"새벽 감성"},
+    {"title":"비도 오고 그래서","artist":"헤이즈","desc":"비 오는 날 생각나는","time":"03:34","mood":"잔잔한"}
+  ]
+}
