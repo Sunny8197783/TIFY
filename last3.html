@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>추천 결과 - Emotion Music</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    @keyframes moodGlow {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    .mood-bg {
+      background-size: 600% 600%;
+      animation: moodGlow 15s ease infinite;
+    }
+  </style>
+</head>
+
+<body id="pageBody" class="bg-[#0B0C1A] text-white font-[Pretendard]">
+
+<div class="flex w-screen h-screen">
+
+  <!-- Sidebar -->
+  <aside class="w-72 h-full bg-[#12132A] p-6 flex flex-col justify-between">
+    <div>
+      <div class="text-2xl font-bold mb-10">🌙 This is for you</div>
+      <nav class="space-y-4">
+        <button class="w-full text-left px-4 py-3 rounded-xl hover:bg-white/10 transition">🏠 홈</button>
+        <button class="w-full text-left px-4 py-3 rounded-xl hover:bg-white/10 transition">🎵 추천 플레이리스트</button>
+        <button class="w-full text-left px-4 py-3 rounded-xl hover:bg-white/10 transition">📝 감정 기록</button>
+        <button class="w-full text-left px-4 py-3 rounded-xl hover:bg-white/10 transition">❤️ 저장한 음악</button>
+        <button class="w-full text-left px-4 py-3 rounded-xl hover:bg-white/10 transition">⚙️ 설정</button>
+        <button class="w-full text-left px-4 py-3 rounded-xl hover:bg-white/10 transition">🌞 라이트모드</button>
+        <button class="w-full text-left px-4 py-3 rounded-xl bg-indigo-500 text-white shadow-lg transition">
+          📊 추천 결과
+        </button>
+      </nav>
+    </div>
+    <div class="text-sm text-gray-400 leading-relaxed opacity-80">
+      “음악은 감정을 이해하는 가장 가까운 언어다.”
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <main class="flex-1 p-10 overflow-y-auto">
+    <h1 class="text-3xl font-bold mb-6">추천 결과 페이지 🎧</h1>
+
+    <!-- 추천 음악 리스트 -->
+    <div class="space-y-4 mb-12">
+      <div class="flex items-center justify-between bg-gray-800 rounded-xl p-4 hover:bg-gray-800 transition">
+        <div class="flex items-center gap-4">
+          <img src="imges/앨범1.jpg" class="w-16 h-16 rounded-lg object-cover" />
+          <div>
+            <div class="font-semibold">너의 밤은 어떤지</div>
+            <div class="text-sm text-gray-400">에피톤 프로젝트 · 04:31</div>
+          </div>
+        </div>
+        <div class="flex gap-3">
+          <button onclick="playSong('너의 밤은 어떤지')" class="text-2xl hover:text-indigo-400 transition">▶</button>
+          <button onclick="saveSong('너의 밤은 어떤지')" class="text-2xl hover:text-pink-400 transition">❤️</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="space-y-4 mb-12">
+      <div class="flex items-center justify-between bg-gray-800 rounded-xl p-4 hover:bg-gray-800 transition">
+        <div class="flex items-center gap-4">
+          <img src="imges/앨범6.jpg" class="w-16 h-16 rounded-lg object-cover" />
+          <div>
+            <div class="font-semibold">So Cute</div>
+            <div class="text-sm text-gray-400">화사 · 04:31</div>
+          </div>
+        </div>
+        <div class="flex gap-3">
+          <button onclick="playSong('너의 밤은 어떤지')" class="text-2xl hover:text-indigo-400 transition">▶</button>
+          <button onclick="saveSong('너의 밤은 어떤지')" class="text-2xl hover:text-pink-400 transition">❤️</button>
+        </div>
+      </div>
+    </div>
+
+    
+
+    <!-- 감정 기록 + 이모티콘 선택을 나란히 -->
+    <h2 class="text-2xl font-bold mb-4">감정 기록 📅</h2>
+    <div class="flex gap-6">
+      <!-- 감정 기록 달력 -->
+      <div class="bg-gray-800 rounded-2xl p-4 w-[350px] h-[310px]">
+        <div class="flex justify-between mb-4">
+          <span class="font-semibold">2026년 6월</span>
+          <button class="text-gray-400 hover:text-white">▼</button>
+        </div>
+        <div class="grid grid-cols-7 gap-2 text-center text-sm">
+          <div class="text-gray-400">일</div><div class="text-gray-400">월</div><div class="text-gray-400">화</div>
+          <div class="text-gray-400">수</div><div class="text-gray-400">목</div><div class="text-gray-400">금</div><div class="text-gray-400">토</div>
+          <div></div>
+          <div onclick="openEmotionModal('2026-06-01')" class="cursor-pointer hover:bg-indigo-500/30 rounded-full p-1">1</div>
+          <div onclick="openEmotionModal('2026-06-02')" class="cursor-pointer hover:bg-indigo-500/30 rounded-full p-1">2</div>
+            <div onclick="openEmotionModal('2026-06-03')" class="cursor-pointer hover:bg-indigo-500/30 rounded-full p-2">3</div>
+        <div onclick="openEmotionModal('2026-06-04')" class="cursor-pointer hover:bg-indigo-500/30 rounded-full p-2">4</div>
+        <div onclick="openEmotionModal('2026-06-05')" class="cursor-pointer hover:bg-indigo-500/30 rounded-full p-2">5</div>
+        <div onclick="openEmotionModal('2026-06-06')" class="cursor-pointer hover:bg-indigo-500/30 rounded-full p-2">6</div>
+
+        <div onclick="openEmotionModal('2026-06-07')" class="cursor-pointer hover:bg-indigo-500/30 rounded-full p-2">7</div>
+        <div onclick="openEmotionModal('2026-06-08')" class="cursor-pointer hover:bg-indigo-500/30 rounded-full p-2">8</div>
+        <div onclick="openEmotionModal('2026-06-09')" class="cursor-pointer hover:bg-indigo-500/30 rounded-full p-2">9</div>
+        <div onclick="openEmotionModal('2026-06-10')" class="cursor-pointer hover:bg-indigo-500/30 rounded-full p-2">10</div>
+        <div onclick="openEmotionModal('2026-06-11')" class="cursor-pointer hover:bg-indigo-500/30 rounded-full p-2">11</div>
+        <div onclick="openEmotionModal('2026-06-12')" class="cursor-pointer hover:bg-indigo-500/30 rounded-full p-2">12</div>
+        <div onclick="openEmotionModal('2026-06-13')" class="cursor-pointer hover:bg-indigo-500/30 rounded-full p-2">13</div>
+
+        <div onclick="openEmotionModal('2026-06-14')" class="cursor-pointer hover:bg-indigo-500/30 rounded-full p-2">14</div>
+        <div onclick="openEmotionModal('2026-06-15')" class="cursor-pointer hover:bg-indigo-500/30 rounded-full p-2">15</div>
+        <div onclick="openEmotionModal('2026-06-16')" class="cursor-pointer hover:bg-indigo-500/30 rounded-full p-2">16</div>
+        <div onclick="openEmotionModal('2026-06-17')" class="cursor-pointer hover:bg-indigo-500/30 rounded-full p-2">17</div>
+        <div onclick="openEmotionModal('2026-06-18')" class="cursor-pointer hover:bg-indigo-500/30 rounded-full p-2">18</div>
+        <div onclick="openEmotionModal('2026-06-19')" class="cursor-pointer hover:bg-indigo-500/30 rounded-full p-2">19</div>
+        <div onclick="openEmotionModal('2026-06-20')" class="cursor-pointer hover:bg-indigo-500/30 rounded-full p-2">20</div>
+
+        <div onclick="openEmotionModal('2026-06-21')" class="cursor-pointer hover:bg-indigo-500/30 rounded-full p-2">21</div>
+        <div onclick="openEmotionModal('2026-06-22')" class="cursor-pointer hover:bg-indigo-500/30 rounded-full p-2">22</div>
+        <div onclick="openEmotionModal('2026-06-23')" class="cursor-pointer hover:bg-indigo-500/30 rounded-full p-2">23</div>
+        <div onclick="openEmotionModal('2026-06-24')" class="cursor-pointer hover:bg-indigo-500/30 rounded-full p-2">24</div>
+        <div onclick="openEmotionModal('2026-06-25')" class="cursor-pointer hover:bg-indigo-500/30 rounded-full p-2">25</div>
+        <div onclick="openEmotionModal('2026-06-26')" class="cursor-pointer hover:bg-indigo-500/30 rounded-full p-2">26</div>
+        <div onclick="openEmotionModal('2026-06-27')" class="cursor-pointer hover:bg-indigo-500/30 rounded-full p-2">27</div>
+
+        <div onclick="openEmotionModal('2026-06-28')" class="cursor-pointer hover:bg-indigo-500/30 rounded-full p-2">28</div>
+        <div onclick="openEmotionModal('2026-06-29')" class="cursor-pointer hover:bg-indigo-500/30 rounded-full p-2">29</div>
+        <div onclick="openEmotionModal('2026-06-30')" class="cursor-pointer hover:bg-indigo-500/30 rounded-full p-2">30</div>
+        </div>
+        </div>
+
+      <!-- 감정 이모티콘 선택 공간 -->
+       
+      <div class="flex-1 bg-[#12132A] rounded-2xl p-4 grid grid-cols-3 gap-3 text-center h-[310px]">
+        <button onclick="setMood('happy')" class="rounded-2xl py-3 hover:scale-105 transition">
+          <div class="text-3xl mb-1">😊</div><div class="text-sm">행복해</div>
+        </button>
+        <button onclick="setMood('sad')" class="rounded-2xl py-3 hover:scale-105 transition">
+          <div class="text-3xl mb-1">😢</div><div class="text-sm">우울해</div>
+        </button>
+        <button onclick="setMood('calm')" class="rounded-2xl py-3 hover:scale-105 transition">
+          <div class="text-3xl mb-1">🌿</div><div class="text-sm">평온해</div>
+        </button>
+        <button onclick="setMood('excited')" class="rounded-2xl py-3 hover:scale-105 transition">
+          <div class="text-3xl mb-1">🎉</div><div class="text-sm">신나</div>
+        </button>
+        <button onclick="setMood('romantic')" class="rounded-2xl py-3 hover:scale-105 transition">
+          <div class="text-3xl mb-1">💜</div><div class="text-sm">설레</div>
+        </button>
+        <button onclick="setMood('lonely')" class="rounded-2xl py-3 hover:scale-105 transition">
+          <div class="text-3xl mb-1">💧</div><div class="text-sm">외로워</div>
+        </button>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- 감정 기록 모달 -->
+<div id="emotionModal" class="hidden fixed inset-0 bg-black/60 flex items-center justify-center">
+  <div class="bg-[#1C1D2E] p-6 rounded-2xl w-[400px]">
+    <h3 class="text-xl font-semibold mb-4">오늘의 감정 기록 📝</h3>
+    <textarea id="emotionText" rows="4" placeholder="오늘의 기분을 적어보세요..."
+              class="w-full bg-white/10 text-white p-3 rounded-xl outline-none resize-none"></textarea>
+    <div class="flex justify-end mt-4 gap-3">
+      <button onclick="closeModal()" class="px-4 py-2 rounded-xl bg-gray-600 hover:bg-gray-500">취소</button>
+      <button onclick="saveEmotion()" class="px-4 py-2 rounded-xl bg-indigo-500 hover:bg-indigo-400">저장</button>
+    </div>
+  </div>
+</div>
+
+<script>
+function playSong(title) {
+  alert(`🎵 '${title}' 재생 중입니다.`);
+}
+function saveSong(title) {
+  alert(`❤️ '${title}'를 저장했습니다.`);
+}
+function openEmotionModal(date) {
+  document.getElementById('emotionModal').classList.remove('hidden');
+  document.getElementById('emotionModal').setAttribute('data-date', date);
+}
+function closeModal() {
+  document.getElementById('emotionModal').classList.add('hidden');
+}
+function saveEmotion() {
+  const date = document.getElementById('emotionModal').getAttribute('data-date');
+  const text = document.getElementById('emotionText').value;
+  alert(`📝 ${date} 감정 기록 저장됨: ${text}`);
+  document.getElementById('emotionText').value = "";
+  closeModal();
+}
+function setMood(mood) {
+  const body = document.getElementById('pageBody');
+  switch(mood) {
+    case 'happy':
+      body.style.background = 'linear-gradient(270deg, #FBC02D, #F9A825)';
+      break;
+    case 'sad':
+      body.style.background = 'linear-gradient(270deg, #6A5ACD, #8A2BE2)';
+      break;
+    case 'calm':
+      body.style.background = 'linear-gradient(270deg, #81C784, #A5D6A7)';
+      break;
+    case 'excited':
+      body.style.background = 'linear-gradient(270deg, #FF80AB, #FF4081)';
+      break;
+    case 'romantic':
+      body.style.background = 'linear-gradient(270deg, #F48FB1, #CE93D8)';
+      break;
+    case 'lonely':
+      body.style.background = 'linear-gradient(270deg, #4FC3F7, #0288D1)';
+      break;
+  }
+  body.classList.add('mood-bg');
+}
+</script>
+
+
+</body>
+</html>
+
+
+

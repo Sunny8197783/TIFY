@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>추천 플레이리스트 - Emotion Music</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    .album-card:hover .play-button {
+      opacity: 1;
+      transform: scale(1);
+    }
+    .play-button {
+      opacity: 0;
+      transform: scale(0.8);
+      transition: all 0.3s ease;
+    }
+  </style>
+</head>
+
+<body id="pageBody" class="bg-[#0B0C1A] text-white font-[Pretendard]">
+
+<div class="flex w-screen h-screen">
+
+  <!-- Sidebar -->
+  <aside class="w-72 h-full bg-[#12132A] p-6 flex flex-col justify-between">
+    <div>
+      <div class="text-2xl font-bold mb-10">🌙 This is for you</div>
+      <nav class="space-y-4">
+        <button class="w-full text-left px-4 py-3 rounded-xl hover:bg-white/10 transition">🏠 홈</button>
+        <button class="w-full text-left px-4 py-3 rounded-xl bg-indigo-500 text-white shadow-lg transition">🎵 추천 플레이리스트</button>
+        <button class="w-full text-left px-4 py-3 rounded-xl hover:bg-white/10 transition">📝 감정 기록</button>
+        <button class="w-full text-left px-4 py-3 rounded-xl hover:bg-white/10 transition">❤️ 저장한 음악</button>
+        <button class="w-full text-left px-4 py-3 rounded-xl hover:bg-white/10 transition">⚙️ 설정</button>
+        <button class="w-full text-left px-4 py-3 rounded-xl hover:bg-white/10 transition">🌞 라이트모드</button>
+        <button class="w-full text-left px-4 py-3 rounded-xl hover:bg-white/10 transition"">📊 추천 결과</button>
+      </nav>
+    </div>
+    <div class="text-sm text-gray-400 leading-relaxed opacity-80">
+      “음악은 감정을 이해하는 가장 가까운 언어다.”
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <main class="flex-1 p-10 overflow-y-auto">
+    <h1 class="text-3xl font-bold mb-6">추천 플레이리스트 🎵</h1>
+
+    <!-- 앨범 카드 영역 -->
+    <div class="grid grid-cols-3 gap-6">
+      <!-- 앨범 카드 -->
+      <div class="album-card relative bg-gray-800 rounded-2xl overflow-hidden cursor-pointer group">
+        <img src="imges/앨범1.jpg" class="w-full h-56 object-cover" alt="앨범1">
+        <div class="absolute inset-0 flex items-center justify-center bg-black/40 play-button rounded-2xl">
+          <button onclick="openAlbum('정은지')" class="bg-indigo-500 text-white rounded-full p-4 text-xl hover:bg-indigo-400 transition">▶</button>
+        </div>
+        <div class="p-4">
+          <div class="font-semibold">정은지</div>
+          <div class="text-sm text-gray-400">너의 밤은 어떄· 04:31</div>
+        </div>
+      </div>
+
+      <div class="album-card relative bg-gray-800 rounded-2xl overflow-hidden cursor-pointer group">
+        <img src="imges/앨범2.jpg" class="w-full h-56 object-cover" alt="앨범2">
+        <div class="absolute inset-0 flex items-center justify-center bg-black/40 play-button rounded-2xl">
+          <button onclick="openAlbum('AESPA')" class="bg-indigo-500 text-white rounded-full p-4 text-xl hover:bg-indigo-400 transition">▶</button>
+        </div>
+        <div class="p-4">
+          <div class="font-semibold">AESPA</div>
+          <div class="text-sm text-gray-400">Armageddon · 03:16</div>
+        </div>
+      </div>
+      
+
+      <div class="album-card relative bg-gray-800 rounded-2xl overflow-hidden cursor-pointer group">
+        <img src="imges/앨범3.webp" class="w-full h-56 object-cover" alt="앨범3">
+        <div class="absolute inset-0 flex items-center justify-center bg-black/40 play-button rounded-2xl">
+          <button onclick="openAlbum('IVE')" class="bg-indigo-500 text-white rounded-full p-4 text-xl hover:bg-indigo-400 transition">▶</button>
+        </div>
+        <div class="p-4">
+          <div class="font-semibold">IVE</div>
+          <div class="text-sm text-gray-400">REBEL HEART· 03:55</div>
+        </div>
+      </div>
+      
+      <div class="album-card relative bg-gray-800 rounded-2xl overflow-hidden cursor-pointer group">
+        <img src="imges/앨범4.jpg" class="w-full h-56 object-cover" alt="앨범4">
+        <div class="absolute inset-0 flex items-center justify-center bg-black/40 play-button rounded-2xl">
+          <button onclick="openAlbum('ILLIT')" class="bg-indigo-500 text-white rounded-full p-4 text-xl hover:bg-indigo-400 transition">▶</button>
+        </div>
+        <div class="p-4">
+          <div class="font-semibold">ILLIT</div>
+          <div class="text-sm text-gray-400">It's Me · 02:18</div>
+        </div>
+      </div>
+
+      <div class="album-card relative bg-gray-800 rounded-2xl overflow-hidden cursor-pointer group">
+        <img src="imges/앨범5.jpg" class="w-full h-56 object-cover" alt="앨범5">
+        <div class="absolute inset-0 flex items-center justify-center bg-black/40 play-button rounded-2xl">
+          <button onclick="openAlbum('BOYNEXTDOOR')" class="bg-indigo-500 text-white rounded-full p-4 text-xl hover:bg-indigo-400 transition">▶</button>
+        </div>
+        <div class="p-4">
+          <div class="font-semibold">BOYNEXTDOOR</div>
+          <div class="text-sm text-gray-400">HOLLYWOOD ACTION · 02:27</div>
+        </div>
+      </div>
+
+      <div class="album-card relative bg-gray-800 rounded-2xl overflow-hidden cursor-pointer group">
+        <img src="imges/앨범6.jpg" class="w-full h-56 object-cover" alt="앨범6">
+        <div class="absolute inset-0 flex items-center justify-center bg-black/40 play-button rounded-2xl">
+          <button onclick="openAlbum('화사')" class="bg-indigo-500 text-white rounded-full p-4 text-xl hover:bg-indigo-400 transition">▶</button>
+        </div>
+        <div class="p-4">
+          <div class="font-semibold">화사</div>
+          <div class="text-sm text-gray-400">SO CUTE · 03:34</div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- 앨범 곡 목록 모달 -->
+<div id="albumModal" class="hidden fixed inset-0 bg-black/60 flex items-center justify-center">
+  <div class="bg-[#1C1D2E] p-6 rounded-2xl w-[400px]">
+    <h3 id="albumTitle" class="text-xl font-semibold mb-4">앨범 제목</h3>
+    <ul id="songList" class="space-y-2 text-gray-300">
+      <!-- 곡 목록이 여기에 동적으로 추가됨 -->
+    </ul>
+    <div class="flex justify-end mt-4">
+      <button onclick="closeAlbum()" class="px-4 py-2 rounded-xl bg-gray-600 hover:bg-gray-500">닫기</button>
+    </div>
+  </div>
+</div>
+
+<script>
+function openAlbum(title) {
+  const modal = document.getElementById('albumModal');
+  const albumTitle = document.getElementById('albumTitle');
+  const songList = document.getElementById('songList');
+  modal.classList.remove('hidden');
+  albumTitle.textContent = title;
+
+  //앨범 곡 목록//
+ const songs = {
+  '정은지': ['너의 밤은 어떤지', '선인장', '초록빛 거리'],
+  'AESPA': ['Armageddon', 'Whiplash', 'NEXTLEVEL'],
+  'IVE': ['REBEL HEART', 'BANGBANG', 'I AM'],
+  'ILLIT': ['Its Me', 'NOT CUTE ANYMORE', 'MAGNETIC'],
+  'BOYNEXTDOOR': ['Hollwood Action', 'IF I SAY, I LOVE YOU', 'I Fell Good'],
+  '화사': ['SO CUTE', 'GOOD GOODBYE', '마리아']
+};
+
+  songList.innerHTML = songs[title].map(song => 
+    `<li class="cursor-pointer hover:text-indigo-400 transition">${song}</li>`
+  ).join('');
+}
+
+function closeAlbum() {
+  document.getElementById('albumModal').classList.add('hidden');
+}
+</script>
+
+<!-- 미니 플레이어 -->
+ <div id="miniPlayer" class="fixed bottom-0 left-0 w-full bg-[#12132A] text-white flex items-center justify-between px-6 py-3 shadow-lg">
+  <div class="flex items-center gap-4"
+    <img id="playerAlbum" src="imges/album1.jpg" class="w-12 h-12 rounded-lg object-cover" alt="앨범 커버">
+    <div>
+      <div id="playerTitle" class="font-semibold">재생 중인 곡 없음</div>
+      <div id="playerArtist" class="text-sm text-gray-400">-</div>
+    </div>
+  </div>
+
+
+  <div class="flex items-center gap-6">
+    <button onclick="prevSong()" class="text-2xl hover:text-indigo-400 transition">⏮</button>
+    <button onclick="togglePlay()" id="playPauseBtn" class="text-3xl hover:text-indigo-400 transition">▶</button>
+    <button onclick="nextSong()" class="text-2xl hover:text-indigo-400 transition">⏭</button>
+  </div>
+
+  <div class="text-sm text-gray-400">
+    <span id="currentTime">00:00</span> / <span id="totalTime">03:41</span>
+  </div>
+</div>
+
+<script>
+let isPlaying = false;
+let currentSongIndex = 0;
+const playlist = [
+  { title: '너의 밤은 어떤지', artist: '에피톤 프로젝트', album: 'imges/album1.jpg', duration: '04:31' },
+  { title: 'Armageddon', artist: 'AESPA', album: 'imges/album2.jpg', duration: '03:16' },
+  { title: 'REBEL HEART', artist: 'IVE', album: 'imges/album3.jpg', duration: '03:55' }
+];
+
+function updatePlayer(song) {
+  document.getElementById('playerTitle').textContent = song.title;
+  document.getElementById('playerArtist').textContent = song.artist;
+  document.getElementById('playerAlbum').src = song.album;
+  document.getElementById('totalTime').textContent = song.duration;
+}
+
+function togglePlay() {
+  const btn = document.getElementById('playPauseBtn');
+  isPlaying = !isPlaying;
+  btn.textContent = isPlaying ? '⏸' : '▶';
+}
+
+function nextSong() {
+  currentSongIndex = (currentSongIndex + 1) % playlist.length;
+  updatePlayer(playlist[currentSongIndex]);
+}
+
+function prevSong() {
+  currentSongIndex = (currentSongIndex - 1 + playlist.length) % playlist.length;
+  updatePlayer(playlist[currentSongIndex]);
+}
+
+// 초기 상태 설정
+updatePlayer(playlist[currentSongIndex]);
+</script>
+
+
+</body>
+</html>
