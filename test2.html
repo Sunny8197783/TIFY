@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI 음악 추천 & 공유 서비스</title>
+    <style>
+        /* 기본 웹페이지 스타일 정의 */
+        body {
+            font-family: 'Malgun Gothic', sans-serif;
+            background-color: #f5f7fa;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            width: 100%;
+            max-width: 500px;
+            box-sizing: border-box;
+        }
+
+        h1 {
+            font-size: 24px;
+            color: #333;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        input[type="text"] {
+            flex: 1;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            outline: none;
+        }
+
+        input[type="text"]:focus {
+            border-color: #4a90e2;
+        }
+
+        button.search-btn {
+            padding: 12px 20px;
+            background-color: #4a90e2;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.2s;
+        }
+
+        button.search-btn:hover {
+            background-color: #357abd;
+        }
+
+        /* 로딩 애니메이션 (숨김 기본값) */
+        #loader {
+            display: none;
+            text-align: center;
+            margin: 20px 0;
+            font-size: 16px;
+            color: #666;
+            font-weight: bold;
+        }
+
+        /* AI 결과 박스 */
+        #resultBox {
+            display: none;
+            margin-top: 20px;
+            border-top: 2px solid #eee;
+            padding-top: 20px;
+        }
+
+        /* AI가 만들어낼 음악 아이템 카드 스타일 */
+        .music-item {
+            background-color: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+
+        .music-item strong {
+            display: block;
+            font-size: 16px;
+            color: #212529;
+            margin-bottom: 10px;
+        }
+
+        .music-item p {
+            font-size: 14px;
+            color: #6c757d;
+            margin: 10px 0 0 0;
+            line-height: 1.4;
+        }
+
+        /* 버튼 공통 스타일 */
+        .youtube-btn, .share-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px;
+            font-size: 13px;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+            font-weight: bold;
+            margin-right: 5px;
+        }
+
+        .youtube-btn {
+            background-color: #ff0000;
+            color: white;
+        }
+
+        .share-btn {
+            background-color: #e1e7ec;
+            color: #333;
+            border: 1px solid #ccc;
+        }
+        
+        .share-btn:hover {
+            background-color: #d4dadf;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>🎧 AI 음악 추천 서비스</h1>
+    
+    <div class="input-group">
+        <input type="text" id="userInput" placeholder="원하는 분위기를 입력하세요 (예: 신나는 댄스곡)">
+        <button class="search-btn" onclick="getMusicRecommendation()">추천 받기</button>
+    </div>
+
+    <div id="loader">🎵 AI가 어울리는 음악을 고르는 중...</div>
+
+    <div id="resultBox"></div>
+</div>
+
+<script>
+// ⚠️ 발급받으신 실제 구글 Gemini API 키를 "코드" 대신 여기에 입력하세요.
+const GEMINI_API_KEY = "AIzaSyB1y3hECalRo5y35r7XLH9O9-KNzvVPs4c"; 
+
+// 사용자가 버튼을 눌렀을 때 작동하는 핵심 비동기(async) 함수
+async function getMusicRecommendation() {
+    const userInputField = document.getElementById('userInput');
+    const resultBox = document.getElementById('resultBox');
+    const loader = document.getElementById('loader');
+
+    if (!userInputField || !resultBox || !loader) {
+        console.error("필수 HTML 요소가 로드되지 않았습니다. ID를 확인하세요.");
+        return;
+    }
+
+    const userInput = userInputField.value.trim();
+
+    if (!userInput) {
+        alert('내용을 입력해주세요!');
+        return;
+    }
+
+    loader.style.display = "block";
+    resultBox.style.display = "none";
+
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`;
+
+    try {
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                contents: [{
+                    parts: [{
+                        text: `당신은 세계 최고의 음악 추천 전문가입니다. 사용자의 요청 분위기에 맞춰 음악 3곡을 추천해주세요.
+                        
+                        ⚠️ 중요 답변 형식 규칙:
+                        반드시 아래의 HTML 구조를 지켜서 답변해주세요. 다른 설명글(예: "추천해 드리겠습니다" 등)은 모두 제외하고 오직 이 HTML 태그들만 출력하세요.
+                        공백이나 줄바꿈은 자유롭게 하되 구조는 유지해야 합니다.
+                        유튜브 링크 주소는 'https://www.youtube.com/results?search_query=노래제목+가수이름' 형식으로 자동 생성해서 href에 넣어주세요. 공백은 +로 연결해야 합니다.
+                        
+                        ★추가 규칙: 공유 버튼 data-url 속성에도 동일한 유튜브 링크 주소를 넣어주세요.
+
+                        [출력할 HTML 형식 예시]:
+                        <div class="music-item">
+                            <strong>1. 노래제목 - 아티스트</strong> 
+                            <a href="https://www.youtube.com/results?search_query=Dynamite+BTS" target="_blank" class="youtube-btn">▶ 유튜브 검색</a>
+                            <button class="share-btn" data-url="https://www.youtube.com/results?search_query=Dynamite+BTS" data-title="Dynamite - BTS">🔗 친구에게 공유</button>
+                            <p>이 곡을 추천하는 이유 설명</p>
+                        </div>
+                        <div class="music-item">
+                            <strong>2. 노래제목 - 아티스트</strong> 
+                            <a href="유튜브주소" target="_blank" class="youtube-btn">▶ 유튜브 검색</a>
+                            <button class="share-btn" data-url="유튜브주소" data-title="노래제목 - 아티스트">🔗 친구에게 공유</button>
+                            <p>이 곡을 추천하는 이유 설명</p>
+                        </div>
+                        <div class="music-item">
+                            <strong>3. 노래제목 - 아티스트</strong> 
+                            <a href="유튜브주소" target="_blank" class="youtube-btn">▶ 유튜브 검색</a>
+                            <button class="share-btn" data-url="유튜브주소" data-title="노래제목 - 아티스트">🔗 친구에게 공유</button>
+                            <p>이 곡을 추천하는 이유 설명</p>
+                        </div>
+
+                        사용자 요청 분위기: ${userInput}`
+                    }]
+                }]
+            })
+        });
+
+        const data = await response.json();
+        
+        if (data.candidates && data.candidates[0].content.parts[0]) {
+            let recommendationHtml = data.candidates[0].content.parts[0].text;
+            
+            recommendationHtml = recommendationHtml.replace(/```html/g, '').replace(/```/g, '').trim();
+
+            resultBox.innerHTML = recommendationHtml;
+            resultBox.style.display = "block"; 
+        } else {
+            resultBox.innerHTML = "추천을 가져오지 못했습니다. 다시 시도해주세요.";
+            resultBox.style.display = "block";
+        }
+    } catch (error) {
+        console.error("에러 발생:", error);
+        resultBox.innerHTML = "오류가 발생했습니다. API 키를 확인하세요.";
+        resultBox.style.display = "block";
+    } finally {
+        loader.style.display = "none";
+    }
+}
+
+/* =========================================
+  동적으로 생성된 '친구에게 공유' 버튼 이벤트 처리
+  ========================================= */
+document.getElementById('resultBox').addEventListener('click', async (event) => {
+    if (event.target && event.target.classList.contains('share-btn')) {
+        const shareUrl = event.target.getAttribute('data-url');
+        const shareTitle = event.target.getAttribute('data-title');
+
+        // 스마트폰 환경 (카카오톡, 메시지 등 기본 공유창 연동)
+        if (navigator.share) {
+            try {
+                await navigator.share({
+                    title: shareTitle,
+                    text: `이 노래 좋네요! 같이 들어요 🎧\n[${shareTitle}]`,
+                    url: shareUrl,
+                });
+            } catch (error) {
+                console.log('공유 취소 또는 에러:', error);
+            }
+        } 
+        // PC 브라우저 환경 (클립보드에 주소 복사)
+        else {
+            try {
+                await navigator.clipboard.writeText(shareUrl);
+                alert(`📋 [${shareTitle}] 유튜브 링크가 복사되었습니다!\n친구에게 붙여넣기(Ctrl+V)해서 공유해보세요.`);
+            } catch (err) {
+                alert('링크 복사에 실패했습니다. 다시 시도해주세요.');
+            }
+        }
+    }
+});
+</script>
+
+</body>
+</html>

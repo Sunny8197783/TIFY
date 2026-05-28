@@ -1,5 +1,5 @@
 
-const GEMINI_API_KEY = "AIzaSyDcU1Ouexmafx55z01qNcfiMUx0EjeuQ9Y"; 
+const GEMINI_API_KEY = "AIzaSyB1y3hECalRo5y35r7XLH9O9-KNzvVPs4c"; 
 
 // 사용자가 버튼을 눌렀을 때 작동하는 핵심 비동기(async) 함수
 async function getMusicRecommendation() {
