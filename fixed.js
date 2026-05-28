@@ -1,5 +1,5 @@
 // ⚠️ 주의: 구글 AI 스튜디오에서 발급받은 실제 Gemini API 키를 "코드" 대신 여기에 입력해야 정상 작동합니다.
-const GEMINI_API_KEY = "AIzaSyB1y3hECalRo5y35r7XLH9O9-KNzvVPs4c"; 
+const GEMINI_API_KEY = "코드"; 
 
 /**
  * [핵심 기능] 사용자가 입력한 분위기에 맞춰 AI에게 음악을 추천받는 비동기 함수
