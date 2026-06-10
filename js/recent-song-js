@@ -1,0 +1,226 @@
+/**
+ * js/recent-songs.js
+ * 사이드바 좌측 하단 "날씨 카드" → "최근 추천 3곡" 카드로 교체
+ * - localStorage.records 에서 가장 최근 기록을 읽어 앞 3곡 표시
+ * - 카드 클릭 시 그 기록을 sessionStorage에 복원하고 결과 페이지로 이동
+ * - 날씨 카드는 제거가 아니라 숨김 → weather.js fetch 로직은 계속 동작(AI 프롬프트용)
+ */
+
+(function () {
+  // ─────────────────────────────────────────────
+  // ⚙️ 설정 (필요하면 이 두 줄만 고치면 됨)
+  // ─────────────────────────────────────────────
+  const RESULTS_PAGE = 'playlist.html';   // ← 결과 페이지 실제 파일명으로 맞춰줘
+  const WEATHER_CARD_SELECTOR = '';        // ← 비워두면 자동 감지. 안 잡히면 정확한 선택자 넣기 (예: '.weather-card')
+
+  // ─────────────────────────────────────────────
+  // CSS 자동 주입
+  // ─────────────────────────────────────────────
+  const css = `
+    .recent-songs-card{
+      margin: 14px 12px;
+      padding: 16px 16px 14px;
+      border-radius: 18px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      cursor: pointer;
+      transition: transform .25s cubic-bezier(.22,1,.36,1), box-shadow .25s, border-color .25s;
+    }
+    .recent-songs-card:hover{
+      transform: translateY(-2px);
+      border-color: rgba(186,140,255,0.45);
+      box-shadow: 0 10px 30px rgba(120,80,220,0.28);
+    }
+    .recent-songs-card .rs-title{
+      font-size: 13px;
+      font-weight: 700;
+      color: rgba(255,255,255,0.92);
+      letter-spacing: .3px;
+      margin: 0 0 12px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .recent-songs-card .rs-list{ display:flex; flex-direction:column; gap:10px; }
+    .recent-songs-card .rs-row{ display:flex; align-items:center; gap:10px; min-width:0; }
+    .recent-songs-card .rs-thumb{
+      width: 30px; height: 30px; flex:0 0 30px;
+      border-radius: 8px;
+      display:flex; align-items:center; justify-content:center;
+      font-size: 14px;
+      background: linear-gradient(135deg, rgba(170,120,255,0.35), rgba(110,80,220,0.35));
+    }
+    .recent-songs-card .rs-info{ min-width:0; }
+    .recent-songs-card .rs-song-title{
+      font-size: 12.5px; font-weight: 600; color:#fff;
+      white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:140px;
+    }
+    .recent-songs-card .rs-artist{
+      font-size: 11px; color: rgba(255,255,255,0.55);
+      white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:140px;
+    }
+    .recent-songs-card .rs-empty{
+      font-size: 12px; color: rgba(255,255,255,0.55);
+      line-height:1.6; text-align:center; padding: 6px 0;
+    }
+  `;
+  const style = document.createElement('style');
+  style.textContent = css;
+  document.head.appendChild(style);
+
+  // ─────────────────────────────────────────────
+  // records → 가장 최근 기록 찾기
+  // ─────────────────────────────────────────────
+  function parseRecordTime(rec) {
+    // date: "2026-6-10", time(ko-KR): "오후 03:05"
+    let y = 0, mo = 0, d = 0, h = 0, mi = 0;
+    try {
+      const parts = (rec.date || '').split('-').map(Number);
+      if (parts.length === 3) { y = parts[0]; mo = parts[1]; d = parts[2]; }
+      const t = (rec.time || '').match(/(오전|오후)?\s*(\d{1,2}):(\d{2})/);
+      if (t) {
+        h = parseInt(t[2], 10);
+        mi = parseInt(t[3], 10);
+        if (t[1] === '오후' && h < 12) h += 12;
+        if (t[1] === '오전' && h === 12) h = 0;
+      }
+    } catch (e) {}
+    return new Date(y, (mo || 1) - 1, d || 1, h, mi).getTime();
+  }
+
+  function getLatestRecord() {
+    let records = {};
+    try {
+      const raw = localStorage.getItem('records');
+      if (raw && raw !== 'undefined') records = JSON.parse(raw);
+    } catch (e) {}
+
+    const entries = Object.entries(records)
+      .filter(([, v]) => v && Array.isArray(v.songs) && v.songs.length)
+      .sort((a, b) => parseRecordTime(b[1]) - parseRecordTime(a[1]));
+
+    if (entries.length) return { key: entries[0][0], record: entries[0][1] };
+
+    // 기록이 없으면 현재 세션 추천 곡으로 폴백
+    try {
+      let raw = sessionStorage.getItem('safeSongs');
+      if (raw && raw !== 'undefined') {
+        const songs = JSON.parse(raw);
+        if (Array.isArray(songs) && songs.length) {
+          return { key: '__session__', record: { songs, mood: sessionStorage.getItem('userMood') || '' } };
+        }
+      }
+    } catch (e) {}
+
+    return null;
+  }
+
+  // ─────────────────────────────────────────────
+  // 클릭 → 기록 복원 후 결과 페이지로 이동
+  // ─────────────────────────────────────────────
+  function openResult(rec) {
+    try {
+      const songs = (rec.songs || []).slice(0, 5);
+      sessionStorage.setItem('safeSongs', JSON.stringify(songs));
+      sessionStorage.setItem('analysisResult', JSON.stringify({
+        category: rec.category || '기타',
+        comfortMessage: rec.comfortMessage || '',
+        songs,
+      }));
+      if (rec.mood) sessionStorage.setItem('userMood', rec.mood);
+      // currentRecordId는 일부러 지움 → 결과 페이지에서 중복 기록 저장 방지
+      sessionStorage.removeItem('currentRecordId');
+    } catch (e) {
+      console.error('🚨 최근 추천 복원 실패:', e);
+    }
+    window.location.href = RESULTS_PAGE;
+  }
+
+  // ─────────────────────────────────────────────
+  // 카드 렌더링
+  // ─────────────────────────────────────────────
+  function buildCard() {
+    const latest = getLatestRecord();
+    const card = document.createElement('div');
+    card.className = 'recent-songs-card';
+
+    if (!latest) {
+      card.innerHTML = `
+        <p class="rs-title">🎵 최근 추천 곡</p>
+        <p class="rs-empty">아직 추천받은 곡이 없어요.<br>감정을 입력하고 추천을 받아보세요!</p>`;
+      return card;
+    }
+
+    const songs = (latest.record.songs || []).slice(0, 3);
+    const rows = songs.map(s => `
+      <div class="rs-row">
+        <div class="rs-thumb">🎵</div>
+        <div class="rs-info">
+          <div class="rs-song-title">${(s.title || '제목 없음')}</div>
+          <div class="rs-artist">${(s.artist || '가수 없음')}</div>
+        </div>
+      </div>`).join('');
+
+    card.innerHTML = `<p class="rs-title">🎵 최근 추천 곡</p><div class="rs-list">${rows}</div>`;
+    card.addEventListener('click', () => openResult(latest.record));
+    return card;
+  }
+
+  // ─────────────────────────────────────────────
+  // 날씨 카드 찾아서 숨기고 그 자리에 삽입
+  // ─────────────────────────────────────────────
+  function findWeatherCard() {
+    if (WEATHER_CARD_SELECTOR) {
+      return document.querySelector(WEATHER_CARD_SELECTOR);
+    }
+    // 자동 감지: "날씨 불러오는" / "위치 확인" 텍스트를 가진 가장 안쪽 요소 → 카드 컨테이너로 상승
+    const sidebar = document.querySelector('.sidebar, aside, nav') || document.body;
+    const all = sidebar.querySelectorAll('div, section, article');
+    let hit = null;
+    all.forEach(el => {
+      if (hit) return;
+      const txt = el.textContent || '';
+      if (txt.includes('날씨 불러오는') || txt.includes('위치 확인') ||
+          (txt.includes('날씨') && txt.includes('°'))) {
+        hit = el;
+      }
+    });
+    if (!hit) return null;
+    // 너무 큰 컨테이너를 잡지 않도록, 사이드바 직계에 가까운 카드 레벨까지만 상승
+    let node = hit;
+    while (node.parentElement &&
+           node.parentElement !== sidebar &&
+           (node.parentElement.textContent || '').trim() === (node.textContent || '').trim()) {
+      node = node.parentElement;
+    }
+    return node;
+  }
+
+  function init() {
+    const card = buildCard();
+    const weatherCard = findWeatherCard();
+
+    if (weatherCard && weatherCard.parentElement) {
+      weatherCard.style.display = 'none';            // 숨김(제거X) → weather.js fetch 유지
+      weatherCard.parentElement.insertBefore(card, weatherCard);
+      console.log('✅ 최근 추천 카드 삽입 완료 (날씨 카드 숨김)');
+    } else {
+      // 날씨 카드를 못 찾으면 사이드바 끝에 그냥 추가
+      const sidebar = document.querySelector('.sidebar, aside, nav');
+      if (sidebar) {
+        sidebar.appendChild(card);
+        console.warn('⚠️ 날씨 카드를 못 찾아 사이드바 끝에 추가함. WEATHER_CARD_SELECTOR 지정 권장.');
+      } else {
+        console.warn('⚠️ 사이드바를 찾지 못했습니다.');
+      }
+    }
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+})();

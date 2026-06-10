@@ -1,5 +1,6 @@
 /**
- * js/playlist.js v4 — 큰 앨범 카드 + 저장 + 공유 기능
+ * js/playlist.js v5 — 큰 앨범 카드 + 저장 + 공유 + 사이드바 최근추천 연동
+ * (v4 대비 변경: 추천 받을 때마다 localStorage 'tify_latest_songs' 저장 → recent.js와 연동)
  */
 window.allSongs = [];
 let analysis = {};
@@ -13,6 +14,17 @@ function loadSaved(){
     if (!raw || raw === 'undefined') raw = '[]';
     savedKeys = new Set(JSON.parse(raw).map(songKey));
   } catch(e) { savedKeys = new Set(); }
+}
+
+// ★ 사이드바 "최근 추천" 카드(recent.js)가 읽는 키에 저장
+function saveLatestForSidebar(){
+  try {
+    if (allSongs && allSongs.length) {
+      localStorage.setItem('tify_latest_songs', JSON.stringify(allSongs.slice(0, 5)));
+    }
+  } catch (e) {
+    console.error("🚨 최근 추천 저장 실패:", e);
+  }
 }
 
 async function loadSongs(){
@@ -37,6 +49,7 @@ async function loadSongs(){
     loadSaved();
     render();
     saveTodayRecord();
+    saveLatestForSidebar();   // ★ 추가: 사이드바 최근추천 동기화
   } catch (error) {
     console.error("🚨 데이터 파싱 에러:", error);
     const list = document.getElementById('songList');

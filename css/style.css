@@ -30,25 +30,17 @@
   --border-glass: rgba(255, 255, 255, 0.08);
 }
 
-/* ═══════════════════════════════════════════════════════
-   🌈 홈 화면 — 무지개 오로라 (계속 색이 변함)
-═══════════════════════════════════════════════════════ */
+/* ───── 🌌 홈 화면 — 깊은 우주 밤하늘 (인트로와 통일) ───── */
 body[data-theme="home"] {
-  --bg-gradient: linear-gradient(-45deg,
-    #ff6b9d 0%, #ffd76b 14%, #6bffc8 28%,
-    #5edfff 42%, #c89bf2 56%, #ff8c6b 70%,
-    #ff6b9d 85%, #ffd76b 100%);
+  --bg-gradient: linear-gradient(135deg,
+    #050518 0%, #0a0f30 25%, #1a0a3a 50%, #0a1f3a 75%, #050518 100%);
   --bg-photo: none;
   --overlay-opacity: 1;
 }
 body[data-theme="home"]::before {
-  animation: auroraBG 12s ease infinite, rainbowHue 18s linear infinite;
+  animation: auroraBG 40s ease infinite;   /* 잔잔한 오로라만 남김, 무지개 효과 제거 */
 }
-@keyframes rainbowHue {
-  0%   { filter: hue-rotate(0deg)   saturate(1.0); }
-  50%  { filter: hue-rotate(180deg) saturate(1.2); }
-  100% { filter: hue-rotate(360deg) saturate(1.0); }
-}
+
 
 /* ═══════════════════════════════════════════════════════
    ☀️ 긍정 감정 — 몽글몽글 밝은 파스텔
@@ -755,3 +747,756 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 .logo:active {
   transform: scale(0.98);
 }
+/* ═══════════════════════════════════════════════
+   🌀 모핑 로딩 구체 — 꿀렁꿀렁 유기체
+═══════════════════════════════════════════════ */
+.morph-orb {
+  position: relative;
+  width: 260px; height: 260px;
+  margin: 50px auto 40px;
+  filter: drop-shadow(0 0 80px rgba(232,121,249,0.45));
+}
+
+.morph-orb-core {
+  position: absolute;
+  inset: 0;
+  border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+  background:
+    radial-gradient(circle at 30% 30%,
+      rgba(255,255,255,0.75) 0%,
+      #ffb8d4 12%,
+      #e879f9 32%,
+      #7b5cff 62%,
+      #2a1868 100%);
+  animation: morphShape 4s ease-in-out infinite;
+  box-shadow:
+    inset -28px -38px 65px rgba(58,31,140,0.65),
+    inset 20px 20px 55px rgba(255,255,255,0.42);
+  will-change: border-radius, transform;
+}
+
+.morph-orb-glow {
+  position: absolute;
+  inset: -40px;
+  border-radius: 30% 70% 60% 40% / 50% 60% 30% 60%;
+  background: radial-gradient(circle,
+    rgba(94,223,255,0.32) 0%,
+    rgba(232,121,249,0.22) 35%,
+    transparent 70%);
+  filter: blur(24px);
+  animation: morphShape 6s ease-in-out infinite reverse;
+  mix-blend-mode: screen;
+}
+
+.morph-orb-highlight {
+  position: absolute;
+  top: 15%; left: 22%;
+  width: 35%; height: 25%;
+  border-radius: 50%;
+  background: radial-gradient(ellipse,
+    rgba(255,255,255,0.55) 0%,
+    transparent 70%);
+  filter: blur(4px);
+  animation: highlightFloat 5s ease-in-out infinite;
+}
+
+@keyframes morphShape {
+  0%, 100% { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; transform: rotate(0deg) scale(1); }
+  20%      { border-radius: 30% 60% 70% 40% / 50% 60% 30% 60%; transform: rotate(72deg) scale(1.05); }
+  40%      { border-radius: 50% 50% 30% 60% / 30% 30% 70% 70%; transform: rotate(144deg) scale(0.95); }
+  60%      { border-radius: 60% 40% 60% 30% / 70% 30% 50% 60%; transform: rotate(216deg) scale(1.05); }
+  80%      { border-radius: 40% 70% 30% 60% / 60% 40% 60% 40%; transform: rotate(288deg) scale(1); }
+}
+@keyframes highlightFloat {
+  0%, 100% { transform: translate(0, 0); opacity: 0.7; }
+  50%      { transform: translate(8px, -6px); opacity: 1; }
+}
+
+/* ═══════════════════════════════════════════════
+   🔠 텍스트 가독성 — 모든 배경에서 읽힘
+═══════════════════════════════════════════════ */
+.page h2,
+.home h1,
+.analyzing-headline,
+.home .subtitle,
+.cal-month,
+.rd-head .date,
+.cal-cell {
+  text-shadow: 0 2px 16px rgba(0,0,0,0.65), 0 4px 28px rgba(0,0,0,0.35);
+}
+
+/* 밝은 파스텔 테마용 — 흰 글로우로 분리감 */
+body[data-theme="happy"] h1, body[data-theme="happy"] h2, body[data-theme="happy"] .analyzing-headline,
+body[data-theme="joyful"] h1, body[data-theme="joyful"] h2,
+body[data-theme="love"] h1, body[data-theme="love"] h2,
+body[data-theme="romantic"] h1, body[data-theme="romantic"] h2,
+body[data-theme="empowered"] h1, body[data-theme="empowered"] h2,
+body[data-theme="hopeful"] h1, body[data-theme="hopeful"] h2,
+body[data-theme="nostalgic"] h1, body[data-theme="nostalgic"] h2,
+body[data-theme="bittersweet"] h1, body[data-theme="bittersweet"] h2,
+body[data-theme="energetic"] h1, body[data-theme="energetic"] h2,
+body[data-theme="excited"] h1, body[data-theme="excited"] h2 {
+  text-shadow: 0 2px 16px rgba(255,255,255,0.7), 0 0 36px rgba(255,255,255,0.35);
+}
+
+/* 추천 이유, 분석 단계 텍스트 등 본문 가독성 */
+.comfort-msg, .analyzing-step, .desc-text, .song-info .desc {
+  text-shadow: 0 1px 6px rgba(0,0,0,0.5);
+}
+
+/* 사이드바 nav 아이템 — 흰 배경 위에서도 안 묻히게 */
+.sidebar .nav-item {
+  color: rgba(255,255,255,0.85);
+  text-shadow: 0 1px 4px rgba(0,0,0,0.5);
+}
+
+/* ═══════════════════════════════════════════════
+   ❌ 하단 플레이어 바 제거 + 자리 채울 CTA
+═══════════════════════════════════════════════ */
+.player { display: none !important; }
+
+.result-actions {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin: 60px auto 40px;
+  flex-wrap: wrap;
+  max-width: 720px;
+}
+.cta-secondary, .cta-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 28px;
+  border-radius: 30px;
+  font-size: 14px;
+  font-weight: 700;
+  text-decoration: none;
+  letter-spacing: 0.3px;
+  transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+  cursor: pointer;
+  border: none;
+  font-family: inherit;
+}
+.cta-secondary {
+  background: rgba(255,255,255,0.10);
+  border: 1px solid rgba(255,255,255,0.20);
+  color: #fff;
+  backdrop-filter: blur(12px);
+}
+.cta-secondary:hover {
+  background: rgba(255,255,255,0.18);
+  transform: translateY(-3px);
+  box-shadow: 0 10px 28px rgba(0,0,0,0.35);
+  border-color: rgba(255,255,255,0.4);
+}
+.cta-primary {
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  color: #fff;
+  box-shadow: 0 8px 24px rgba(123,92,255,0.4);
+}
+.cta-primary:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 14px 32px rgba(232,121,249,0.55);
+}
+
+.main { padding-bottom: 0; }
+.page { padding-bottom: 40px; }
+
+/* ═══════════════════════════════════════════════
+   🎧 사이드바 — 날씨 자리에 최근 추천곡 카드
+═══════════════════════════════════════════════ */
+.recent-card {
+  margin-top: auto;
+  margin-bottom: 20px;
+  padding: 16px;
+  background: linear-gradient(135deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02));
+  backdrop-filter: blur(14px);
+  border: 1px solid rgba(255,255,255,0.14);
+  border-radius: 18px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 18px rgba(0,0,0,0.25);
+}
+.recent-card:hover {
+  transform: translateY(-3px);
+  border-color: rgba(232,121,249,0.5);
+  box-shadow: 0 10px 30px rgba(232,121,249,0.2);
+}
+.recent-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 14px;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+}
+.recent-head .recent-arrow {
+  margin-left: auto;
+  opacity: 0.6;
+  transition: transform 0.3s, opacity 0.3s;
+}
+.recent-card:hover .recent-arrow {
+  transform: translateX(4px);
+  opacity: 1;
+}
+.recent-songs { display: flex; flex-direction: column; gap: 8px; }
+.recent-song {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px;
+  border-radius: 10px;
+  background: rgba(255,255,255,0.04);
+  transition: background 0.2s;
+}
+.recent-card:hover .recent-song { background: rgba(255,255,255,0.09); }
+.rs-thumb {
+  width: 36px; height: 36px;
+  border-radius: 9px;
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 15px;
+  flex-shrink: 0;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+}
+.rs-info { min-width: 0; flex: 1; overflow: hidden; }
+.rs-title {
+  font-size: 12px; font-weight: 700; color: #fff;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  letter-spacing: 0.2px;
+}
+.rs-artist {
+  font-size: 11px; color: rgba(255,255,255,0.65);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  margin-top: 3px;
+}
+.recent-empty {
+  text-align: center;
+  padding: 20px 10px 10px;
+}
+.recent-empty .empty-emoji { font-size: 32px; margin-bottom: 10px; opacity: 0.55; }
+.recent-empty .empty-text {
+  font-size: 12px; color: rgba(255,255,255,0.7);
+  line-height: 1.55; font-weight: 500;
+}
+/* ═══════════════════════════════════════════════
+   📌 정리 — 상단 날씨 배너 숨김 + 사이드바 컴팩트화
+═══════════════════════════════════════════════ */
+
+/* 1️⃣ 상단 "오늘의 날씨를 불러오는 중..." 배너 숨김
+        (날씨 데이터는 sessionStorage 통해 AI 프롬프트에만 사용) */
+.weather-banner { display: none !important; }
+
+/* 2️⃣ 사이드바 — 명언이 잘리지 않도록 전체 컴팩트화 */
+.sidebar {
+  padding: 32px 24px 16px;   /* 아래 패딩 축소 */
+}
+
+.recent-card {
+  margin-top: auto;
+  margin-bottom: 14px;
+  padding: 14px;
+}
+
+.recent-head {
+  margin-bottom: 10px;
+  font-size: 11px;
+  letter-spacing: 0.4px;
+}
+
+.recent-songs { gap: 6px; }
+
+.recent-song {
+  padding: 6px 8px;
+  gap: 9px;
+}
+
+.rs-thumb {
+  width: 32px; height: 32px;
+  border-radius: 7px;
+  font-size: 13px;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.3);
+}
+
+.rs-title  { font-size: 11.5px; }
+.rs-artist { font-size: 10px; margin-top: 2px; }
+
+/* 3️⃣ 명언 — 절대 잘리지 않게 */
+.sidebar .quote {
+  padding: 12px 8px 0;
+  font-size: 11px;
+  line-height: 1.55;
+  flex-shrink: 0;       /* ✅ 다른 요소가 자라도 명언은 압축 안됨 */
+}
+.sidebar .quote .moon {
+  font-size: 16px;
+  margin-bottom: 6px;
+}
+/* ═══════════════════════════════════════════════════
+   ✨ TIFY 4.0 — Final Design Upgrade
+   · 우아한 타이포그래피 (영문 serif italic 액센트)
+   · 강화된 글래스모피즘
+   · 부드러운 마이크로 인터랙션
+   · 데일리 리프트 / 무드보드 / 감정 카드 / 히트맵
+═══════════════════════════════════════════════════ */
+
+/* ─── 폰트 import ─── */
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+:root {
+  --font-display: 'Cormorant Garamond', Georgia, serif;
+  --font-sans-strong: 'Pretendard', 'Inter', -apple-system, sans-serif;
+}
+
+/* 영문 serif italic 액센트 — 한국어 헤딩 옆에 함께 사용 */
+.serif-en {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  background: linear-gradient(135deg, #f8e7ff, #c89bf2);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  padding: 0 6px;
+  font-size: 0.72em;
+  vertical-align: 0.05em;
+}
+
+/* 헤딩 타이포 강화 */
+.home h1, .page h2, .analyzing-headline {
+  font-family: var(--font-sans-strong);
+  font-weight: 800;
+  letter-spacing: -0.028em;
+  line-height: 1.22;
+}
+.home h1 { font-size: clamp(36px, 5.5vw, 58px); }
+.page h2 { font-size: clamp(28px, 3.5vw, 38px); }
+
+/* 글래스모피즘 강화 */
+.sidebar,
+.song-card,
+.saved-card,
+.recent-card,
+.calendar-card,
+.record-detail,
+.heatmap-card,
+.daily-lift {
+  background: linear-gradient(135deg,
+    rgba(255,255,255,0.08) 0%,
+    rgba(255,255,255,0.03) 50%,
+    rgba(255,255,255,0.05) 100%) !important;
+  backdrop-filter: blur(28px) saturate(160%);
+  -webkit-backdrop-filter: blur(28px) saturate(160%);
+  box-shadow:
+    0 8px 32px rgba(0,0,0,0.32),
+    inset 0 1px 0 rgba(255,255,255,0.14);
+}
+
+/* 마이크로 인터랙션 — 모든 인터랙티브 요소 */
+button, .nav-item, .chip, .song-card, .saved-card, .recent-card, .cta-secondary, .cta-primary {
+  transition: all 0.35s cubic-bezier(0.22, 1, 0.36, 1) !important;
+}
+
+/* ═══════════════════════════════════════════════════
+   🌅 데일리 리프트 — 홈 화면
+═══════════════════════════════════════════════════ */
+.daily-lift {
+  width: 100%;
+  max-width: 680px;
+  margin: 0 auto 32px;
+  padding: 16px;
+  border: 1px solid rgba(255,255,255,0.16);
+  border-radius: 22px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  animation: liftFadeIn 1.2s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes liftFadeIn {
+  0% { opacity: 0; transform: translateY(-14px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+.daily-lift-header {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 120px;
+  padding: 0 8px;
+}
+
+.daily-lift-label {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 12px;
+  font-weight: 500;
+  color: rgba(255,220,180,0.95);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.daily-lift-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: -0.01em;
+  line-height: 1.3;
+}
+
+.daily-lift-embed {
+  flex: 1;
+  min-width: 0;
+}
+
+.daily-lift-embed iframe {
+  border-radius: 12px !important;
+  display: block;
+  width: 100%;
+  height: 80px;
+  border: 0;
+}
+
+.daily-lift-close {
+  width: 30px; height: 30px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.15);
+  color: rgba(255,255,255,0.7);
+  font-size: 16px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.daily-lift-close:hover {
+  background: rgba(255,255,255,0.18);
+  color: #fff;
+  transform: scale(1.1);
+}
+
+@media (max-width: 700px) {
+  .daily-lift { flex-direction: column; align-items: stretch; }
+  .daily-lift-header { min-width: 0; }
+  .daily-lift-close { position: absolute; top: 10px; right: 10px; }
+}
+
+/* ═══════════════════════════════════════════════════
+   🎨 감정 무드보드 — 저장한 음악 화면
+═══════════════════════════════════════════════════ */
+.saved-toggle {
+  display: flex;
+  justify-content: center;
+  gap: 4px;
+  margin: 0 auto 32px;
+  padding: 4px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 28px;
+  width: fit-content;
+  backdrop-filter: blur(12px);
+}
+
+.saved-toggle button {
+  padding: 10px 22px;
+  border-radius: 24px;
+  font-size: 13px;
+  font-weight: 700;
+  color: rgba(255,255,255,0.65);
+  background: transparent;
+  letter-spacing: 0.3px;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.saved-toggle button.active {
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  color: #fff;
+  box-shadow: 0 4px 14px rgba(123,92,255,0.4);
+}
+
+.mood-section {
+  margin-bottom: 50px;
+  animation: liftFadeIn 0.5s ease;
+}
+
+.mood-section-header {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  margin-bottom: 18px;
+  padding: 0 8px;
+}
+
+.mood-section-title {
+  font-family: var(--font-sans-strong);
+  font-size: 22px;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: -0.02em;
+}
+
+.mood-section-en {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 17px;
+  color: rgba(255,255,255,0.5);
+  letter-spacing: 0.02em;
+}
+
+.mood-section-count {
+  margin-left: auto;
+  font-size: 13px;
+  font-weight: 600;
+  color: rgba(255,255,255,0.6);
+  padding: 4px 12px;
+  background: rgba(255,255,255,0.05);
+  border-radius: 20px;
+  border: 1px solid rgba(255,255,255,0.1);
+}
+
+/* ═══════════════════════════════════════════════════
+   🃏 감정 카드 다운로드 — 결과 화면
+═══════════════════════════════════════════════════ */
+.share-card-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 28px;
+  border-radius: 30px;
+  background: linear-gradient(135deg, #e879f9, #7b5cff);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  box-shadow: 0 8px 24px rgba(232,121,249,0.4);
+}
+.share-card-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 14px 32px rgba(232,121,249,0.55);
+}
+
+/* 캡처용 카드 (화면에서 안 보이는 위치, html2canvas가 그릴 때만 사용) */
+.mood-card-canvas {
+  position: fixed;
+  top: -9999px;
+  left: -9999px;
+  width: 540px;
+  height: 960px;
+  background: linear-gradient(135deg, #1a0a3a 0%, #0a0f3a 50%, #050518 100%);
+  padding: 60px 40px;
+  font-family: var(--font-sans-strong);
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.mc-header { text-align: center; margin-bottom: 30px; }
+.mc-date {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 16px;
+  color: rgba(255,255,255,0.6);
+  letter-spacing: 0.15em;
+  margin-bottom: 14px;
+}
+.mc-mood {
+  font-size: 38px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin-bottom: 6px;
+  background: linear-gradient(135deg, #fff, #c89bf2);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.mc-mood-en {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 22px;
+  color: rgba(255,255,255,0.55);
+}
+.mc-message {
+  font-size: 17px;
+  line-height: 1.65;
+  text-align: center;
+  margin: 22px 0 35px;
+  color: rgba(255,255,255,0.88);
+  padding: 22px;
+  background: rgba(255,255,255,0.06);
+  border-radius: 18px;
+  border: 1px solid rgba(255,255,255,0.12);
+}
+.mc-songs { flex: 1; display: flex; flex-direction: column; gap: 10px; }
+.mc-song {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 18px;
+  background: rgba(255,255,255,0.05);
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,0.08);
+}
+.mc-song-num {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 26px;
+  color: rgba(232,121,249,0.85);
+  width: 28px;
+}
+.mc-song-info { flex: 1; min-width: 0; }
+.mc-song-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: #fff;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.mc-song-artist {
+  font-size: 12px;
+  color: rgba(255,255,255,0.6);
+  margin-top: 3px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.mc-footer {
+  text-align: center;
+  padding-top: 24px;
+  border-top: 1px solid rgba(255,255,255,0.1);
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 13px;
+  letter-spacing: 0.32em;
+  color: rgba(255,255,255,0.5);
+}
+.mc-logo {
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  background: linear-gradient(135deg, #fff, #c89bf2);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  margin-top: 8px;
+  font-family: var(--font-sans-strong);
+  font-style: normal;
+}
+
+/* ═══════════════════════════════════════════════════
+   🔥 1년 감정 히트맵 — 감정 기록 화면
+═══════════════════════════════════════════════════ */
+.heatmap-card {
+  margin-top: 32px;
+  border: 1px solid rgba(255,255,255,0.10);
+  border-radius: 24px;
+  padding: 32px;
+}
+
+.heatmap-header {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  margin-bottom: 24px;
+}
+
+.heatmap-title {
+  font-family: var(--font-sans-strong);
+  font-size: 20px;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: -0.02em;
+}
+
+.heatmap-subtitle {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 16px;
+  color: rgba(255,255,255,0.5);
+}
+
+.heatmap-grid {
+  display: grid;
+  grid-template-columns: repeat(53, 1fr);
+  gap: 3px;
+  margin-bottom: 18px;
+}
+
+.heatmap-cell {
+  aspect-ratio: 1;
+  border-radius: 3px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.04);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.heatmap-cell.has-record {
+  border-color: rgba(255,255,255,0.18);
+}
+
+.heatmap-cell:hover {
+  transform: scale(1.5);
+  z-index: 10;
+  border-color: rgba(255,255,255,0.55) !important;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+}
+
+.heatmap-tooltip {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(15,15,25,0.96);
+  border: 1px solid rgba(255,255,255,0.18);
+  padding: 6px 11px;
+  border-radius: 8px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #fff;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s;
+  z-index: 20;
+}
+.heatmap-cell:hover .heatmap-tooltip { opacity: 1; }
+
+.heatmap-legend {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 16px;
+  font-size: 11px;
+  color: rgba(255,255,255,0.6);
+  flex-wrap: wrap;
+}
+
+.heatmap-legend-bar { display: flex; gap: 3px; }
+
+.heatmap-legend-cell {
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+  border: 1px solid rgba(255,255,255,0.1);
+}
+
+@media (max-width: 900px) {
+  .heatmap-grid { grid-template-columns: repeat(26, 1fr); }
+  .heatmap-card { padding: 22px 18px; }
+}
+
+/* ─── 통계 카드 제거 (히트맵으로 대체) ─── */
+.stats-card { display: none !important; }

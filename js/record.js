@@ -1,224 +1,302 @@
 /**
- * js/record.js — 캘린더 + 월간 통계 (스포티파이 주소 암호화 우회 완벽 적용본)
+ * js/record.js v5 — 달력 + 1년 감정 히트맵
+ * · 달력 ‹ › 버튼 정상 작동
+ * · 날짜 클릭 → 그날 기록 "모두" 표시 (누적), 곡은 Spotify 임베드로 재생
+ * · 히트맵 칸 클릭 → 그날 기록을 위 상세 패널에 표시 + 스크롤
+ * · 자체 CSS 주입 (style.css 수정 불필요)
  */
 
-const style = document.createElement('style');
-style.innerHTML = `
-  #prevMonth, #nextMonth { font-size: 28px !important; padding: 10px 20px !important; cursor: pointer; color: var(--text-main); font-weight: bold; }
-  
-  /* 스크롤 영역을 넉넉하게 확장 */
-  .scrollable-detail { max-height: 700px; overflow-y: auto; padding-right: 8px; }
-  .scrollable-detail::-webkit-scrollbar { width: 6px; }
-  .scrollable-detail::-webkit-scrollbar-thumb { background: #a59fcb; border-radius: 4px; }
-`;
-document.head.appendChild(style);
+let currentDate = new Date();
+let selectedDateKey = null;
 
-const moodEmoji = {happy:'😊', sad:'😢', dawn:'🌙', focus:'🎧', chill:'☁️', love:'💗', angry:'😠', anxious:'😰', energetic:'⚡', nostalgic:'📷', lonely:'🥀', rainy:'🌧️', '기타':'✨'};
-const moodLabel = {happy:'행복', sad:'우울', dawn:'새벽감성', focus:'집중', chill:'멍', love:'설렘', angry:'분노', anxious:'불안', energetic:'에너지', nostalgic:'추억', lonely:'외로움', rainy:'비', '기타':'기타'};
-let viewYear, viewMonth, selectedDay=null;
+const EMOTION_COLORS = {
+  happy: '#ffb87a', joyful: '#ffd47a', excited: '#ff9ec7',
+  energetic: '#c5b5ff', empowered: '#ffd47a', hopeful: '#a5e0ff',
+  love: '#ff8db8', romantic: '#ff8db8', nostalgic: '#e8b890',
+  bittersweet: '#d4a08a', calm: '#80c8d8', peaceful: '#80d090',
+  chill: '#90a8c8', focus: '#70c8b8', focused: '#70c8b8',
+  sad: '#9bb4d8', melancholy: '#9bb4d8', lonely: '#7090b5',
+  heartbroken: '#c08090', dawn: '#b09fd8', rainy: '#8090a8',
+  anxious: '#d4aa50', angry: '#ff9090', frustrated: '#ffac80',
+  overwhelmed: '#c0a0f8', '기본': '#c0a0f8', '기타': '#c0a0f8',
+};
 
-function init(){
-  const now = new Date();
-  viewYear = now.getFullYear(); viewMonth = now.getMonth();
-  selectedDay = now.getDate();
-  render(); showDetail(selectedDay);
+const KOR_LABELS = {
+  happy: '행복', joyful: '기쁨', excited: '신남', energetic: '에너지',
+  empowered: '자신감', hopeful: '희망', love: '설렘', romantic: '로맨틱',
+  nostalgic: '추억', bittersweet: '달콤쌉쌀', calm: '차분', peaceful: '평화',
+  chill: '멍', focus: '집중', focused: '집중', sad: '슬픔', melancholy: '우울',
+  lonely: '외로움', heartbroken: '상심', dawn: '새벽', rainy: '비',
+  anxious: '불안', angry: '분노', frustrated: '답답', overwhelmed: '벅참',
+  '기본': '기본', '기타': '기타',
+  '기쁨':'기쁨','슬픔':'슬픔','설렘':'설렘','새벽':'새벽','분노':'분노',
+};
+const KOR_TO_EN = { '기쁨':'happy','슬픔':'sad','설렘':'love','새벽':'dawn','분노':'angry' };
+
+// ─── CSS 자동 주입 ───
+function injectRecordCSS() {
+  if (document.getElementById('record-extra-style')) return;
+  const css = `
+    /* 히트맵 */
+    .heatmap-card { margin-top: 32px; border: 1px solid rgba(255,255,255,0.10);
+      border-radius: 24px; padding: 32px;
+      background: linear-gradient(135deg, rgba(255,255,255,0.07), rgba(255,255,255,0.03));
+      backdrop-filter: blur(20px); }
+    .heatmap-grid { display: grid; grid-template-columns: repeat(53, 1fr); gap: 3px; margin-bottom: 18px; }
+    .heatmap-cell { aspect-ratio: 1; border-radius: 3px; background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.05); cursor: pointer; transition: all 0.2s ease; position: relative; }
+    .heatmap-cell.has-record { border-color: rgba(255,255,255,0.18); }
+    .heatmap-cell:hover { transform: scale(1.6); z-index: 10;
+      border-color: rgba(255,255,255,0.6) !important; box-shadow: 0 4px 14px rgba(0,0,0,0.4); }
+    .heatmap-tooltip { position: absolute; bottom: calc(100% + 8px); left: 50%;
+      transform: translateX(-50%); background: rgba(15,15,25,0.96);
+      border: 1px solid rgba(255,255,255,0.18); padding: 6px 11px; border-radius: 8px;
+      font-size: 11px; font-weight: 600; color: #fff; white-space: nowrap;
+      pointer-events: none; opacity: 0; transition: opacity 0.2s; z-index: 20; }
+    .heatmap-cell:hover .heatmap-tooltip { opacity: 1; }
+    .heatmap-legend { display: flex; align-items: center; gap: 12px; margin-top: 16px;
+      font-size: 11px; color: rgba(255,255,255,0.6); flex-wrap: wrap; }
+    .heatmap-legend-bar { display: flex; gap: 3px; }
+    .heatmap-legend-cell { width: 12px; height: 12px; border-radius: 3px; border: 1px solid rgba(255,255,255,0.1); }
+    .stats-card { display: none !important; }
+
+    /* 상세 패널 — 여러 기록 누적 */
+    .rd-head { display: flex; align-items: baseline; gap: 12px; margin-bottom: 18px;
+      padding-bottom: 14px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+    .rd-head .date { font-size: 22px; font-weight: 800; color: #fff; letter-spacing: -0.02em; }
+    .rd-count { margin-left: auto; font-size: 12px; font-weight: 600; color: rgba(255,255,255,0.55);
+      padding: 4px 12px; background: rgba(255,255,255,0.06); border-radius: 20px; }
+    .rd-block { margin-bottom: 22px; }
+    .rd-divider { height: 1px; background: rgba(255,255,255,0.08); margin: 22px 0; }
+    .rd-mood { font-size: 16px; font-weight: 800; color: #fff; display: flex; align-items: center; gap: 8px; }
+    .rd-time { margin-left: auto; font-size: 12px; font-weight: 500; color: rgba(255,255,255,0.5); }
+    .rd-text { font-style: italic; color: rgba(255,255,255,0.78); font-size: 14px; margin: 8px 0; line-height: 1.6; }
+    .rd-comfort { color: rgba(255,255,255,0.88); font-size: 13px; margin: 8px 0 12px; line-height: 1.6; }
+    .rd-songs { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; }
+    .rd-embed iframe { width: 100%; height: 80px; border: 0; border-radius: 10px; display: block; }
+    .rd-song-item { display: flex; align-items: center; gap: 12px; padding: 10px 14px;
+      background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; }
+    .rd-song-item .rs-thumb { width: 40px; height: 40px; border-radius: 8px; display: flex;
+      align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+    .rd-song-item .t { font-weight: 700; font-size: 14px; color: #fff; }
+    .rd-song-item .a { color: rgba(255,255,255,0.65); font-size: 12px; margin-top: 2px; }
+    .record-detail { max-height: 620px; overflow-y: auto; }
+
+    @media (max-width: 900px) { .heatmap-grid { grid-template-columns: repeat(26, 1fr); } }
+  `;
+  const style = document.createElement('style');
+  style.id = 'record-extra-style';
+  style.textContent = css;
+  document.head.appendChild(style);
 }
 
-function getMonthRecords(year, month) {
-  const records = JSON.parse(localStorage.getItem('records') || '{}');
-  const daily = {};
-  Object.entries(records).forEach(([key, rec]) => {
-      const recordDate = rec.date || key.split('_')[0];
-      const [y, m, d] = recordDate.split('-').map(Number);
-      if (y === year && m === month + 1) {
-          if (!daily[d]) daily[d] = [];
-          daily[d].push(rec);
-      }
-  });
-  return daily;
+function loadAllRecords() {
+  try {
+    const raw = localStorage.getItem('records');
+    if (!raw || raw === 'undefined') return {};
+    return JSON.parse(raw);
+  } catch (e) { return {}; }
+}
+function dateKey(y, m, d) { return `${y}-${m+1}-${d}`; }
+function getRecordsForDate(y, m, d) {
+  const records = loadAllRecords();
+  const key = dateKey(y, m, d);
+  const matches = [];
+  for (const k in records) {
+    if (k.startsWith(key + '_') || k === key) matches.push(records[k]);
+  }
+  return matches;
+}
+function escapeHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
-function render(){
-  const monthName = ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'][viewMonth];
-  document.getElementById('calMonth').textContent = `${viewYear}년 ${monthName}`;
-
-  const first = new Date(viewYear, viewMonth, 1);
-  const lastDate = new Date(viewYear, viewMonth+1, 0).getDate();
-  const startDow = first.getDay();
-  const today = new Date();
-  const dailyRecords = getMonthRecords(viewYear, viewMonth);
+// ─── 달력 ───
+function renderCalendar() {
+  const year  = currentDate.getFullYear();
+  const month = currentDate.getMonth();
+  const monthEl = document.getElementById('calMonth');
+  if (monthEl) monthEl.textContent = `${year}년 ${month+1}월`;
 
   const grid = document.getElementById('calGrid');
-  const dows = ['일','월','화','수','목','금','토'];
-  let html = dows.map((d,i)=>`<div class="dow ${i===0?'sun':''}">${d}</div>`).join('');
-  for(let i=0;i<startDow;i++) html += '<div class="cal-cell empty"></div>';
+  if (!grid) return;
 
-  for(let d=1; d<=lastDate; d++){
-    const dow = (startDow + d - 1) % 7;
-    const recs = dailyRecords[d]; 
-    const isToday = (d===today.getDate() && viewMonth===today.getMonth() && viewYear===today.getFullYear());
-    const isSel = (d===selectedDay);
+  const days = ['일','월','화','수','목','금','토'];
+  let html = days.map((d, i) => `<div class="dow${i===0?' sun':''}">${d}</div>`).join('');
 
-    let marker = '';
-    if (recs && recs.length > 0) {
-        let cat = recs[0].category;
-        if (!cat || cat === 'undefined') cat = '기타';
-        marker = `<span class="marker">${moodEmoji[cat]||'✨'}</span>`;
-    }
+  const firstDay = new Date(year, month, 1).getDay();
+  for (let i = 0; i < firstDay; i++) html += `<div class="cal-cell empty"></div>`;
 
-    const cls = ['cal-cell', dow===0?'sun':'', isToday?'today':'', isSel?'selected':''].filter(Boolean).join(' ');
-    html += `<div class="${cls}" data-day="${d}">${d}${marker}</div>`;
+  const lastDate = new Date(year, month+1, 0).getDate();
+  const today = new Date();
+  const isThisMonth = today.getFullYear() === year && today.getMonth() === month;
+
+  for (let d = 1; d <= lastDate; d++) {
+    const isToday = isThisMonth && today.getDate() === d;
+    const recs = getRecordsForDate(year, month, d);
+    const dayOfWeek = new Date(year, month, d).getDay();
+    const key = dateKey(year, month, d);
+    html += `
+      <div class="cal-cell${dayOfWeek===0?' sun':''}${isToday?' today':''}${selectedDateKey===key?' selected':''}"
+           data-key="${key}">
+        ${d}${recs.length ? '<div class="marker"></div>' : ''}
+      </div>`;
   }
   grid.innerHTML = html;
 
-  grid.querySelectorAll('.cal-cell[data-day]').forEach(c=>{
-    c.addEventListener('click', ()=>{
-      selectedDay = parseInt(c.dataset.day);
-      render(); showDetail(selectedDay);
+  grid.querySelectorAll('.cal-cell:not(.empty)').forEach(cell => {
+    cell.addEventListener('click', () => {
+      selectedDateKey = cell.dataset.key;
+      const [y, m, d] = cell.dataset.key.split('-').map(Number);
+      renderDetail(y, m-1, d);
+      renderCalendar();
     });
   });
-
-  renderStats(dailyRecords);
 }
 
-function renderStats(dailyRecords){
-  const row = document.getElementById('statsRow'); 
-  const counts = {};
-  const otherDetails = []; 
-
-  Object.values(dailyRecords).forEach(recs => {
-      recs.forEach(rec => {
-          let cat = rec.category;
-          if (!cat || cat === 'undefined' || cat === '기타') {
-              cat = '기타';
-              if(rec.mood) otherDetails.push(rec.mood);
-          }
-          counts[cat] = (counts[cat]||0) + 1;
-      });
-  });
-
-  const entries = Object.entries(counts).sort((a,b)=>b[1]-a[1]);
-  if(!entries.length){
-    row.innerHTML = '<span style="color:var(--text-dim);font-size:13px;">이번 달 기록이 없습니다. 캘린더를 채워보세요!</span>';
-    return;
-  }
-
-  const topEmotion = entries[0][0]; 
-  const topEmotionLabel = moodLabel[topEmotion] || '기타';
-  const topEmotionEmoji = moodEmoji[topEmotion] || '✨';
-
-  const statsPills = entries.map(([c,n]) => {
-      if (c === '기타' && otherDetails.length > 0) {
-          return `
-          <span style="display:inline-block; margin: 4px; padding: 6px 12px; background: rgba(255,255,255,0.08); border-radius: 20px; font-size:13px; color:#fff; cursor:pointer; border: 1px solid #a59fcb;" 
-                onclick="const el = document.getElementById('otherDetailsBox'); el.style.display = el.style.display === 'none' ? 'block' : 'none';"
-                title="클릭해서 어떤 기록인지 확인해보세요!">
-              ${moodEmoji[c]||'✨'} ${moodLabel[c]||'기타'} <strong>${n}번</strong> 🖱️
-          </span>`;
-      }
-      return `
-      <span style="display:inline-block; margin: 4px; padding: 6px 12px; background: rgba(255,255,255,0.08); border-radius: 20px; font-size:13px; color:#fff;">
-          ${moodEmoji[c]||'✨'} ${moodLabel[c]||'기타'} <strong>${n}번</strong>
-      </span>`;
-  }).join('');
-
-  const uniqueOthers = [...new Set(otherDetails)];
-  let otherDetailsHtml = '';
-  if (uniqueOthers.length > 0) {
-      otherDetailsHtml = `
-      <div id="otherDetailsBox" style="display:none; margin-top: 12px; padding: 12px; background: rgba(0,0,0,0.2); border-radius: 8px; text-align: left; font-size: 12px; color: #a59fcb; width: 100%; box-sizing: border-box;">
-          <strong style="color:#fff;">✨ '기타'로 분류된 나의 기록들:</strong>
-          <ul style="margin: 8px 0 0 0; padding-left: 16px; line-height: 1.6;">
-              ${uniqueOthers.map(txt => `<li>"${txt}"</li>`).join('')}
-          </ul>
-      </div>`;
-  }
-
-  row.innerHTML = `
-    <div style="display:flex; flex-direction:column; gap:12px; width: 100%; align-items: center; text-align:center; background: var(--bg-light, #2a2a35); padding: 20px; border-radius: 16px;">
-        <p style="color:#a59fcb; font-size: 15px; margin:0; line-height:1.5;">
-            이번 달은 <strong>${topEmotionEmoji} ${topEmotionLabel}</strong> 감정이 가장 많았네요!
-        </p>
-        <div style="margin-top: 4px;">
-            ${statsPills}
-        </div>
-        ${otherDetailsHtml}
-    </div>
-  `;
-}
-
-function showDetail(day){
-  const dailyRecords = getMonthRecords(viewYear, viewMonth);
-  const recs = dailyRecords[day] || []; 
+// ─── 상세 (하루 여러 기록 누적 + 곡 재생) ───
+function renderDetail(year, month, day) {
   const detail = document.getElementById('recordDetail');
-  const dateLabel = `${viewMonth+1}월 ${day}일`;
+  if (!detail) return;
 
-  if(recs.length === 0){
+  const recs = getRecordsForDate(year, month, day);
+
+  if (recs.length === 0) {
     detail.innerHTML = `
-      <div class="rd-head"><div class="date">${dateLabel}</div></div>
-      <p style="color:var(--text-dim);padding:30px 0;text-align:center;">이 날의 감정 기록이 아직 없어요.<br/>홈에서 오늘의 기분을 입력해보세요.</p>`;
+      <div class="rd-head"><div class="date">${month+1}월 ${day}일</div></div>
+      <p style="text-align:center;color:rgba(255,255,255,0.55);padding:40px 0;line-height:1.7;">
+        이 날의 기록이 없어요 🌙<br>
+        <span style="font-size:13px;color:rgba(255,255,255,0.4)">홈에서 감정을 입력하면 자동 저장돼요</span>
+      </p>`;
     return;
   }
 
-  const htmlList = recs.map((rec, index) => {
-      const tags = rec.bars ? Object.keys(rec.bars).map(k=>`<span class="rd-tag">#${k.replace(/ /g,'')}</span>`).join('') : '';
+  const blocks = recs.map(r => {
+    const moodKey = KOR_TO_EN[r.category] || r.category;
+    const moodLabel = KOR_LABELS[moodKey] || moodKey || '기타';
+    const color = EMOTION_COLORS[moodKey] || '#c0a0f8';
 
-      const songsHtml = (rec.songs||[]).map(s=> {
-          if (s.spotifyId) {
-              // 🚨 AI 검열 필터를 완벽하게 회피하는 암호화(Base64) 스포티파이 주소
-              const finalUrl = atob("aHR0cHM6Ly9vcGVuLnNwb3RpZnkuY29tL2VtYmVkL3RyYWNrLw==") + s.spotifyId + "?utm_source=generator&theme=0";
-              
-              return `
-              <div style="margin-bottom: 12px; overflow: hidden; border-radius: 12px;">
-                  <iframe src="${finalUrl}" width="100%" height="152" frameBorder="0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy" style="border:none; background:transparent;"></iframe>
-              </div>`;
-          } else {
-              return `
-              <div class="rd-song-item" style="margin-bottom:8px;">
-                <div class="song-thumb" style="width:36px;height:36px;font-size:14px;">🎵</div>
-                <div><div class="t">${s.title||'제목 없음'}</div><div class="a">${s.artist||'가수 없음'}</div></div>
-              </div>`;
-          }
+    let songsHtml = '';
+    if (Array.isArray(r.songs)) {
+      songsHtml = r.songs.slice(0, 5).map(s => {
+        if (s && s.spotifyId) {
+          return `<div class="rd-embed">
+            <iframe src="https://open.spotify.com/embed/track/${s.spotifyId}?utm_source=generator&theme=0"
+              allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+              loading="lazy"></iframe></div>`;
+        }
+        return `<div class="rd-song-item">
+            <div class="rs-thumb" style="background:linear-gradient(135deg,${color},#7b5cff)">🎵</div>
+            <div><div class="t">${escapeHtml(s.title || '제목없음')}</div>
+                 <div class="a">${escapeHtml(s.artist || '가수없음')}</div></div>
+          </div>`;
       }).join('');
+    }
 
-      const wIcon = rec.weather ? rec.weather.icon : '';
-      let cat = rec.category;
-      if (!cat || cat === 'undefined') cat = '기타';
-
-      return `
-      <div style="background: var(--bg-light); border-radius: 12px; padding: 16px; margin-bottom: 20px;">
-          <div class="rd-head" style="margin-bottom:12px;">
-            <div class="time" style="font-weight:bold; color:var(--text-main);">${rec.time||`${index+1}번째 기록`} ${wIcon}</div>
-          </div>
-          <div class="rd-mood" style="margin-bottom:12px;">${moodEmoji[cat]||'✨'} ${rec.label||'나의 기분'}</div>
-          <div class="rd-tags">${tags}</div>
-          <div class="rd-text" style="color:var(--text-dim); margin-bottom:16px;">
-              "${rec.mood||''}"<br/><br/>
-              <span style="color:#a59fcb">💡 ${rec.comfortMessage||''}</span>
-          </div>
-          <div class="rd-songs">${songsHtml}</div>
+    return `
+      <div class="rd-block">
+        <div class="rd-mood">
+          <span style="color:${color};font-size:20px">●</span> ${moodLabel}
+          <span class="rd-time">${r.time || ''}</span>
+        </div>
+        ${r.mood ? `<div class="rd-text">"${escapeHtml(r.mood)}"</div>` : ''}
+        ${r.comfortMessage ? `<div class="rd-comfort">💡 ${escapeHtml(r.comfortMessage)}</div>` : ''}
+        ${songsHtml ? `<div class="rd-songs">${songsHtml}</div>` : ''}
       </div>`;
-  }).join('');
+  }).join('<div class="rd-divider"></div>');
 
   detail.innerHTML = `
-    <div class="rd-head" style="margin-bottom: 16px;">
-        <div class="date" style="font-size:18px; font-weight:bold;">${dateLabel}의 기록들</div>
+    <div class="rd-head">
+      <div class="date">${month+1}월 ${day}일</div>
+      <div class="rd-count">${recs.length}개의 기록</div>
     </div>
-    <div class="scrollable-detail">
-        ${htmlList}
-    </div>
-  `;
+    ${blocks}`;
 }
 
-document.getElementById('prevMonth').addEventListener('click', ()=>{
-  viewMonth--; if(viewMonth<0){viewMonth=11; viewYear--;} selectedDay=null;
-  render(); document.getElementById('recordDetail').innerHTML =
-    '<p style="color:var(--text-dim);text-align:center;padding:40px 0;">날짜를 선택하면 그날의 감정 기록이 표시돼요.</p>';
-});
-document.getElementById('nextMonth').addEventListener('click', ()=>{
-  viewMonth++; if(viewMonth>11){viewMonth=0; viewYear++;} selectedDay=null;
-  render(); document.getElementById('recordDetail').innerHTML =
-    '<p style="color:var(--text-dim);text-align:center;padding:40px 0;">날짜를 선택하면 그날의 감정 기록이 표시돼요.</p>';
-});
+// ─── 1년 히트맵 (칸 클릭 시 상세로) ───
+function renderHeatmap() {
+  const grid = document.getElementById('heatmapGrid');
+  if (!grid) return;
 
-init();
+  const records = loadAllRecords();
+  const today = new Date();
+  const start = new Date(today);
+  start.setDate(start.getDate() - 364);
+  const startSun = new Date(start);
+  startSun.setDate(startSun.getDate() - startSun.getDay());
+
+  let html = '';
+  const cursor = new Date(startSun);
+  const todayEnd = new Date(today);
+  todayEnd.setHours(23, 59, 59, 999);
+
+  while (cursor <= todayEnd) {
+    const y = cursor.getFullYear(), m = cursor.getMonth(), d = cursor.getDate();
+    const key = dateKey(y, m, d);
+
+    let recordsToday = [];
+    for (const k in records) {
+      if (k.startsWith(key + '_') || k === key) recordsToday.push(records[k]);
+    }
+
+    let cellStyle = '', tooltip = `${y}.${m+1}.${d} · 기록 없음`, hasRecClass = '';
+    if (recordsToday.length > 0) {
+      const r = recordsToday[0];
+      const moodKey = KOR_TO_EN[r.category] || r.category;
+      const color = EMOTION_COLORS[moodKey] || '#c0a0f8';
+      const intensity = Math.min(0.4 + (recordsToday.length * 0.2), 1);
+      cellStyle = `background:${color};opacity:${intensity}`;
+      const label = KOR_LABELS[moodKey] || r.category;
+      tooltip = `${y}.${m+1}.${d} · ${label} (${recordsToday.length}건)`;
+      hasRecClass = ' has-record';
+    }
+
+    html += `
+      <div class="heatmap-cell${hasRecClass}" style="${cellStyle}" data-key="${key}">
+        <div class="heatmap-tooltip">${tooltip}</div>
+      </div>`;
+    cursor.setDate(cursor.getDate() + 1);
+  }
+  grid.innerHTML = html;
+
+  // 칸 클릭 → 그날 상세 + 달력도 그 달로 이동 + 스크롤
+  grid.querySelectorAll('.heatmap-cell.has-record').forEach(cell => {
+    cell.addEventListener('click', () => {
+      const [y, m, d] = cell.dataset.key.split('-').map(Number);
+      selectedDateKey = cell.dataset.key;
+      currentDate = new Date(y, m-1, 1);
+      renderCalendar();
+      renderDetail(y, m-1, d);
+      const detail = document.getElementById('recordDetail');
+      if (detail) detail.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    });
+  });
+}
+
+// ─── 초기화 ───
+function init() {
+  injectRecordCSS();
+
+  const prevBtn = document.getElementById('prevBtn');
+  const nextBtn = document.getElementById('nextBtn');
+  if (prevBtn) prevBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    currentDate = new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1);
+    renderCalendar();
+  });
+  if (nextBtn) nextBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    currentDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1);
+    renderCalendar();
+  });
+
+  renderCalendar();
+  renderHeatmap();
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', init);
+} else {
+  init();
+}
